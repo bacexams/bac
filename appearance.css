@@ -251,7 +251,6 @@ background: rgba(255,255,255,0.10);
     height: 70vh;
   }
 }
-/* Timer card */
 .timer-panel{
   width: 320px;
   height: 88vh;
@@ -277,8 +276,8 @@ background: rgba(255,255,255,0.10);
 .timer-display{
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Roboto Mono", monospace;
   font-variant-numeric: tabular-nums;
-  font-weight: 900;
-  font-size: clamp(2.4rem, 3.6vw + 1rem, 4.2rem);
+  font-weight: 800;
+  font-size: clamp(2.2rem, 3.5vw + 1rem, 4.2rem);
   line-height: 1;
   letter-spacing: 0.04em;
   display: flex;
