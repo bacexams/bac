@@ -251,3 +251,25 @@ background: rgba(255,255,255,0.10);
     height: 70vh;
   }
 }
+.timer-display{
+  font-size: 2rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  margin: 12px 0;
+}
+
+.timer-inputs{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.timer-inputs input{
+  width: 100%;
+}
+
+.timer-buttons{
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
