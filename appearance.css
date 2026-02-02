@@ -32,7 +32,7 @@ padding: 20px;
 overflow-x: hidden;
 }
 
-h1, h2, h3, .hero-title{
+h1, h2, h3, .main-title{
 font-family: "Oxanium", "Outfit", system-ui, sans-serif;
 letter-spacing: -0.4px;
 margin: 0;
@@ -80,6 +80,30 @@ line-height: 1.45;
 font-family: "Outfit", system-ui, sans-serif;
 }
 
+.link-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+gap: 15px; 
+padding: 10px;
+}
+
+.link-button {
+    display: inline-block;         
+    padding: 10px 20px;            
+    background-color: #1e90ff;   
+    color: white;                
+    text-decoration: none;       
+    border-radius: 5px;            
+    font-weight: bold;             
+    transition: background-color 0.3s, transform 0.2s; 
+}
+
+.link-button:hover {
+    background-color: #0f78d1;     
+    transform: translateY(-2px);    
+}
+
+
 .section-title{
 margin: 22px 0 12px;
 color: white;
@@ -98,23 +122,9 @@ width: 100%;
 max-width: 900px;
 }
 
-.link-grid {
-list-style: none;
-padding: 0;
-margin: 0;
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-gap: 12px;
-}
 
-.link-grid li a {
-display: block;
-padding: 10px 12px;
-border: 1px solid #ccc;
-text-decoration: none;
-}
 
-.btn{
+.button{
 display: block;
 text-align: center;
 padding: 14px 16px;
@@ -129,7 +139,7 @@ box-shadow: 0 12px 28px rgba(0,0,0,0.32);
 transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
 }
 
-.btn:hover{
+.button:hover{
 transform: translateY(-2px);
 border-color: rgba(124,182,255,0.45);
 background: rgba(255,255,255,0.11);
