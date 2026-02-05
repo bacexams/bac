@@ -1,22 +1,4 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>View PDF</title>
-    <link rel="stylesheet" href="appearance.css"/>
-  </head>
-
-  <body>
-    <div class="exam-layout">
-      <iframe id="pdf-viewer" class="pdf-frame"></iframe>
-      <p id="pdf-error" class="pdf-error" hidden>Ajoute un paramètre <strong>?pdf=</strong> dans l’URL pour afficher un sujet.</p>
-
-     
-     <aside class="timer-panel">
-  <h3>Minuteur</h3>
-
-  <div id="timer-display" class="timer-display">00:00:00</div>
+<div id="timer-display" class="timer-display">00:00:00</div>
 
   <div class="timer-inputs">
     <label>Hrs <input id="t-hours" type="number" min="0" value="0"></label>
@@ -43,12 +25,35 @@ La vraie difficulté de l’examen national, c’est le temps très limité. Bea
   document.getElementById('pdf-viewer').src = pdfPath;
   const pdfViewer = document.getElementById('pdf-viewer');
   const pdfError = document.getElementById('pdf-error');
+  let pdfObjectUrl = null;
+
   if (pdfPath) {
     pdfViewer.src = pdfPath;
+    fetch(pdfPath)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`PDF load failed: ${response.status}`);
+        }
+        return response.blob();
+      })
+      .then((blob) => {
+        pdfObjectUrl = URL.createObjectURL(blob);
+        pdfViewer.src = pdfObjectUrl;
+      })
+      .catch(() => {
+        pdfViewer.src = 'about:blank';
+        pdfError.hidden = false;
+      });
   } else {
     pdfViewer.src = 'about:blank';
     pdfError.hidden = false;
   }
+
+  window.addEventListener('beforeunload', () => {
+    if (pdfObjectUrl) {
+      URL.revokeObjectURL(pdfObjectUrl);
+    }
+  });
   const display = document.getElementById('timer-display');
   const hIn = document.getElementById('t-hours');
   const mIn = document.getElementById('t-mins');
