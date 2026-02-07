@@ -4,247 +4,56 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>View PDF</title>
-  <link rel="stylesheet" href="./appearance.css" />
+  <style>
+    body { margin: 0; font-family: system-ui, Arial, sans-serif; }
+    header { padding: 12px 16px; border-bottom: 1px solid #ddd; }
+    #viewer { width: 100%; height: calc(100vh - 58px); border: 0; display: block; }
+    .small { color: #444; font-size: 14px; }
+  </style>
 </head>
-
 <body>
-  <div class="exam-layout">
-    <iframe id="pdf-viewer" class="pdf-frame" title="PDF"></iframe>
+  <header>
+    <div><a href="index.html">← Back</a></div>
+    <div class="small" id="filename"></div>
+    <div class="small"><a id="download" href="#" target="_blank" rel="noopener">Download/Open</a></div>
+  </header>
 
-    <div id="pdf-error" class="pdf-error" hidden></div>
-    <a id="pdf-open" class="pdf-open" target="_blank" rel="noopener" hidden>Ouvrir le PDF dans un nouvel onglet</a>
-
-    <aside class="timer-panel">
-      <h3>Minuteur</h3>
-
-      <div id="timer-display" class="timer-display">00:00:00</div>
-
-      <div class="timer-inputs">
-        <label>Hrs <input id="t-hours" type="number" min="0" value="0"></label>
-        <label>Min <input id="t-mins"  type="number" min="0" max="59" value="0"></label>
-        <label>Sec <input id="t-secs"  type="number" min="0" max="59" value="0"></label>
-      </div>
-
-      <div class="timer-buttons">
-        <button id="t-start" type="button">►</button>
-        <button id="t-pause" type="button" disabled>⏸</button>
-        <button id="t-reset" type="button">⭯</button>
-        <hr class="timer-sep">
-      </div>
-
-      <p class="timer-note">
-        La vraie difficulté de l’examen national, c’est le temps très limité. Beaucoup d’élèves connaissent bien le cours,
-        mais n’arrivent pas à finir à cause d’une mauvaise gestion du temps. Entraîne-toi avec un chronomètre et essaie
-        de t’améliorer à chaque fois.
-      </p>
-    </aside>
-  </div>
+  <iframe id="viewer" title="PDF viewer"></iframe>
 
   <script>
-    (() => {
-      const pdfViewer = document.getElementById('pdf-viewer');
-      const pdfError = document.getElementById('pdf-error');
-      const pdfOpen = document.getElementById('pdf-open');
+    const params = new URLSearchParams(location.search);
+    const pdfParam = params.get("pdf");
 
-      let pdfObjectUrl = null;
+    const viewer = document.getElementById("viewer");
+    const filename = document.getElementById("filename");
+    const download = document.getElementById("download");
 
-      function setError(message, href = null) {
-        pdfError.textContent = message;
-        pdfError.hidden = false;
+    if (!pdfParam) {
+      filename.textContent = "No PDF specified. Use ?pdf=path/to/file.pdf";
+      viewer.remove();
+      download.remove();
+    } else {
+      const pdf = decodeURIComponent(pdfParam);
 
-        if (href) {
-          pdfOpen.href = href;
-          pdfOpen.hidden = false;
-        } else {
-          pdfOpen.hidden = true;
-        }
+      const isPdf = pdf.toLowerCase().endsWith(".pdf");
+      const hasTraversal = pdf.includes("..");
+      const isBadScheme = /^[a-zA-Z]+:/.test(pdf); 
+
+      if (!isPdf || hasTraversal || isBadScheme) {
+        filename.textContent = "Invalid PDF path.";
+        viewer.remove();
+        download.remove();
+      } else {
+        filename.textContent = pdf;
+        viewer.src = pdf;
+        download.href = pdf;
       }
-
-      function clearError() {
-        pdfError.hidden = true;
-        pdfOpen.hidden = true;
-      }
-
-      function safeUrlFromParam(param) {
-        const u = new URL(param, location.href);
-        if (!['http:', 'https:'].includes(u.protocol)) return null;
-        return u;
-      }
-
-      const pdfParam = new URLSearchParams(location.search).get('pdf');
-      if (!pdfParam) {
-        pdfViewer.src = 'about:blank';
-        setError('Ajoute un paramètre ?pdf= dans l’URL pour afficher un sujet.');
-        return;
-      }
-
-      const pdfUrl = safeUrlFromParam(pdfParam);
-      if (!pdfUrl) {
-        pdfViewer.src = 'about:blank';
-        setError('Le paramètre ?pdf= est invalide.');
-        return;
-      }
-
-      const fetchOptions = {
-        method: 'GET',
-        credentials: (pdfUrl.origin === location.origin) ? 'same-origin' : 'omit',
-        cache: 'no-store'
-      };
-
-      fetch(pdfUrl.href, fetchOptions)
-        .then(r => {
-          if (!r.ok) throw new Error('HTTP ' + r.status);
-          return r.arrayBuffer();
-        })
-        .then(buf => {
-          const blob = new Blob([buf], { type: 'application/pdf' });
-          pdfObjectUrl = URL.createObjectURL(blob);
-          pdfViewer.src = pdfObjectUrl;
-          clearError();
-        })
-        .catch(() => {
-          pdfViewer.src = pdfUrl.href;
-          setError("Intégration impossible via fetch (CORS/serveur). Le PDF s’ouvrira peut-être en téléchargement selon le navigateur.", pdfUrl.href);
-        });
-
-      addEventListener('beforeunload', () => {
-        if (pdfObjectUrl) URL.revokeObjectURL(pdfObjectUrl);
-      });
-    })();
-
-    (() => {
-      const display = document.getElementById('timer-display');
-      const hIn = document.getElementById('t-hours');
-      const mIn = document.getElementById('t-mins');
-      const sIn = document.getElementById('t-secs');
-
-      const btnStart = document.getElementById('t-start');
-      const btnPause = document.getElementById('t-pause');
-      const btnReset = document.getElementById('t-reset');
-
-      let intervalId = null;
-      let endTimeMs = null;
-      let remainingMs = 0;
-      let running = false;
-
-      function clamp(n, min, max) {
-        return Math.min(max, Math.max(min, n));
-      }
-
-      function readInputMs() {
-        const h = clamp(Number(hIn.value || 0), 0, 999);
-        const m = clamp(Number(mIn.value || 0), 0, 59);
-        const s = clamp(Number(sIn.value || 0), 0, 59);
-        return (h * 3600 + m * 60 + s) * 1000;
-      }
-
-      function format(ms) {
-        ms = Math.max(0, ms);
-        const total = Math.ceil(ms / 1000);
-        const h = Math.floor(total / 3600);
-        const m = Math.floor((total % 3600) / 60);
-        const s = total % 60;
-        return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-      }
-
-      function render(ms) {
-        display.textContent = format(ms);
-      }
-
-      function setInputsEnabled(enabled) {
-        hIn.disabled = !enabled;
-        mIn.disabled = !enabled;
-        sIn.disabled = !enabled;
-      }
-
-      function setButtons() {
-        btnStart.disabled = running;
-        btnPause.disabled = !running;
-      }
-
-      function stopInterval() {
-        if (intervalId) clearInterval(intervalId);
-        intervalId = null;
-      }
-
-      function tick() {
-        const msLeft = endTimeMs - Date.now();
-        remainingMs = msLeft;
-
-        if (msLeft <= 0) {
-          render(0);
-          stopInterval();
-          running = false;
-          endTimeMs = null;
-          remainingMs = 0;
-          setInputsEnabled(true);
-          setButtons();
-          return;
-        }
-
-        render(msLeft);
-      }
-
-      function start() {
-        if (running) return;
-
-        const startMs = remainingMs > 0 ? remainingMs : readInputMs();
-        if (startMs <= 0) {
-          render(0);
-          return;
-        }
-
-        remainingMs = startMs;
-        endTimeMs = Date.now() + startMs;
-        running = true;
-
-        setInputsEnabled(false);
-        setButtons();
-
-        stopInterval();
-        tick();
-        intervalId = setInterval(tick, 200);
-      }
-
-      function pause() {
-        if (!running) return;
-
-        remainingMs = Math.max(0, endTimeMs - Date.now());
-        running = false;
-        endTimeMs = null;
-
-        stopInterval();
-        setInputsEnabled(true);
-        setButtons();
-        render(remainingMs);
-      }
-
-      function reset() {
-        running = false;
-        endTimeMs = null;
-        remainingMs = 0;
-
-        stopInterval();
-        setInputsEnabled(true);
-        setButtons();
-        render(readInputMs());
-      }
-
-      function onInput() {
-        if (!running) render(readInputMs());
-      }
-
-      btnStart.addEventListener('click', start);
-      btnPause.addEventListener('click', pause);
-      btnReset.addEventListener('click', reset);
-
-      hIn.addEventListener('input', onInput);
-      mIn.addEventListener('input', onInput);
-      sIn.addEventListener('input', onInput);
-
-      setButtons();
-      render(readInputMs());
-    })();
+    }
   </script>
 </body>
 </html>
+
+
+
+
+
