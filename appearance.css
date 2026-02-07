@@ -548,6 +548,18 @@ background: rgba(255,255,255,0.10);
     background: rgba(0,0,0,0.18);
     color: var(--muted);
 }
+
+.exam-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.coorection-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 8px 0;
     
 
 
