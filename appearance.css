@@ -225,7 +225,7 @@ margin-top: 8px;
 }
 
 .timebox{
-border-radius: var(--radius) 
+border-radius: var(--radius); 
 padding: 14px 12px;
 transform: translateY(-2px);
 border-color: rgba(124,182,255,0.4);
