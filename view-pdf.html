@@ -1,3 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>View PDF</title>
+    <link rel="stylesheet" href="appearance.css"/>
+  </head>
+
+  <body>
+    <div class="exam-layout">
+      <iframe id="pdf-viewer" class="pdf-frame"></iframe>
+      <p id="pdf-error" class="pdf-error" hidden>Ajoute un paramètre <strong>?pdf=</strong> dans l’URL pour afficher un sujet.</p>
+
+     
+     <aside class="timer-panel">
+  <h3>Minuteur</h3>
+
 <div id="timer-display" class="timer-display">00:00:00</div>
 
   <div class="timer-inputs">
