@@ -191,9 +191,28 @@ pointer-events: none;
 
 h1:not(.main-title){
 text-align: center;
-font-size: clamp(2.1rem, 5vw, 3rem);
+font-size: clamp(2rem, 4.2vw, 2.6rem);
 line-height: 1.15;
-margin: 34px 0 26px;
+margin: 26px 0 20px;
+color: white;
+font-weight: 1000;
+letter-spacing: 0.8px;
+font-family: "Outfit", system-ui, sans-serif;
+text-shadow: 0 6px 16px rgba(0,0,0,0.35);
+position: relative;
+padding-bottom: 14px;
+}
+
+h1:not(.main-title)::after{
+content: "";
+position: absolute;
+left: 50%;
+bottom: 0;
+width: 82px;
+height: 3px;
+border-radius: 999px;
+transform: translateX(-50%);
+background: linear-gradient(90deg, rgba(124,182,255,0.2), rgba(124,182,255,0.95), rgba(120,255,212,0.7));
 }
 
 
