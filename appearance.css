@@ -201,9 +201,9 @@ margin: 34px 0 26px;
 transform: translateY(-2px);
 border-color: rgba(124,182,255,0.45);
 background: rgba(255,255,255,0.11);
+}
 .button:hover::before{
 transform: translateX(120%);
-}
 
 }
 
@@ -552,7 +552,9 @@ background: rgba(255,255,255,0.10);
 .exam-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 24px auto 0;
+  max-width: 980px;
+
 }
 
 .exam-row {
@@ -560,7 +562,54 @@ background: rgba(255,255,255,0.10);
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   padding: 8px 0;
-    
+}
+
+.exam-row .button{
+  font-size: 0.98rem;
+  padding: 12px;
+}
+
+.session-title{
+  text-decoration: underline;
+  text-underline-offset: 8px;
+}
+
+.session-title::before{
+  content: ".. ";
+  color: var(--accent);
+}
+
+.intro-title{
+  margin: 0 0 10px;
+  text-align: center;
+  font-size: clamp(1.6rem, 2vw + 1rem, 2.3rem);
+}
+
+.intro-highlight{
+  color: var(--text);
+  font-weight: 700;
+}
+
+.intro-panel p + p{
+  margin-top: 10px;
+}
+
+.page-wrap{
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 10px 18px 40px;
+}
+
+.exam-heading{
+  text-align: center;
+  margin-top: 24px;
+}
+
+.cadre-card{
+  max-width: 760px;
+  margin: 0 auto;
+}
+
 
 
 #t-start{ border-color: rgba(80, 200, 120, 0.35); }
