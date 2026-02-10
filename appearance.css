@@ -588,15 +588,6 @@ background: rgba(255,255,255,0.10);
   padding: 12px;
 }
 
-.session-title{
-  text-decoration: underline;
-  text-underline-offset: 8px;
-}
-
-.session-title::before{
-  content: ".. ";
-  color: var(--accent);
-}
 
 .intro-title{
   margin: 0 0 10px;
