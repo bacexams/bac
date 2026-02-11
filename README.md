@@ -1,4 +1,4 @@
-<h1 align="center">ExamHub</h1>
+<h1 align="center">2BAC-HUB</h1>
 
 <p align="center">
   A centralized platform for Moroccan third-year high school students to prepare efficiently for the national Baccalaureate exam.
@@ -8,7 +8,6 @@
   <a href="https://imadd01.github.io/2bac"><strong> Live Demo</strong></a>
 </p>
 
----
 
 ## Overview
 
@@ -16,7 +15,6 @@
 Past national exams are the most valuable preparation resource. However, they are often scattered across unreliable websites, incomplete, poorly scanned, or difficult to navigate.
 2BAC-HUB centralizes these materials into a structured, focused, and distraction-free environment where students can practice under realistic exam conditions.
 
----
 
 ## Problem
 
@@ -29,7 +27,6 @@ Students preparing for the national exam frequently face:
 - Confusing or distracting interfaces  
 ExamHub addresses these issues by providing a clean and centralized exam preparation hub.
 
----
 
 ## Features
 
@@ -40,7 +37,6 @@ ExamHub addresses these issues by providing a clean and centralized exam prepara
 -  Fully responsive design  
 -  Publicly deployed and accessible  
 
----
 
 ##  Current Structure
 
@@ -54,7 +50,6 @@ The platform includes:
 All implemented features are fully functional.  
 Some documents are still being gathered and will be progressively integrated.
 
----
 
 ##  Tech Stack
 
@@ -65,7 +60,6 @@ Some documents are still being gathered and will be progressively integrated.
 - GitHub Pages for deployment
 I have independently designed, developed and deployed the project.
 
----
 
 ##  Future Improvements
 
@@ -78,7 +72,7 @@ I have independently designed, developed and deployed the project.
 - UI/UX refinements  
 - Addition of regional exams for second-year students  
 
----
+
 
 ## Motivation
 
@@ -86,4 +80,3 @@ As a student preparing for the national exam myself, I experienced firsthand the
 
 2BAC-HUB reflects my interest in using technology to solve practical educational problems and improve accessibility for other students.
 
----
