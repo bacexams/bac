@@ -1,1 +1,95 @@
 
+<!doctype html>
+<html lang="fr">
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Examen National 2026</title>
+  <link rel="stylesheet" href="appearance.css">
+</head>
+
+<body>
+  <section class="intro-panel">
+  <h2 class="intro-title">Prépare ton <span class="intro-highlight">Examen National 2026</span> avec confiance</h2>
+  <p>As-tu déjà cherché des examens nationaux en ligne et trouvé des sujets incomplets ou sans correction ? Ici, tu trouveras des centaines d'examens nationaux, classés par filière, avec leurs corrections et une navigation claire. Choisis ta matière, entraîne-toi année par année et prépare-toi dans de vraies conditions grâce au compte à rebours et au chronomètre intégré.</p>
+
+</section>
+  
+  <div class="wrap">
+    <div class="main">
+      <h1 class="main-title">Examen Regional 2026</h1>
+      <div class="main-date">Le 1 Juin 2026</div>
+      <div class="countdown" aria-label="Countdown">
+        <div class="timebox"><span class="num" id="cd-days">0</span><span class="label">Jours</span></div>
+        <div class="timebox"><span class="num" id="cd-hours">0</span><span class="label">Heures</span></div>
+        <div class="timebox"><span class="num" id="cd-mins">0</span><span class="label">Minutes</span></div>
+        <div class="timebox"><span class="num" id="cd-secs">0</span><span class="label">Secondes</span></div>
+      </div>
+    </div>
+
+    <div class="section-title">Examens Regionaux</div>
+
+    <div class="grid">
+      <a class="button" href="majors/s.pc/s-pc.html">Francais</a>
+      <a class="button" href="majors/s.svt/s-svt.html">Arabe</a>
+      <a class="button" href="majors/s.pc/s-pc.html">Histoire Geo</a>
+      <a class="button" href="majors/s.maths/s-maths.html">Education Islamique</a>
+    </div>
+   
+    <div class="section-title">Cadres Référentiels</div>
+    <div class="grid">
+      <li class="exam-row"><a class="button" href="view-pdf.html?pdf=EXAMS/cadres_1bac/cdrfr.pdf">Francais</a></li>
+      <li class="exam-row"><a class="button" href="view-pdf.html?pdf=EXAMS/cadres_1bac/cdrar.pdf">Arabe</a></li>
+      <li class="exam-row"><a class="button" href="view-pdf.html?pdf=EXAMS/cadres_1bac/cdrei.pdf">Education Islamique</a></li>
+      <li class="exam-row"><a class="button" href="view-pdf.html?pdf=EXAMS/cadres_1bac/cdrhg.pdf">Histoire Geo</a></li>
+      
+    </div>
+
+  <script>
+    const target = new Date("2026-06-01T08:00:00+01:00");
+
+    const elDays = document.getElementById("cd-days");
+    const elHours = document.getElementById("cd-hours");
+    const elMins = document.getElementById("cd-mins");
+    const elSecs = document.getElementById("cd-secs");
+
+    function updateCountdown() {
+      if (isNaN(target.getTime())) {
+        elDays.textContent = "ERR";
+        elHours.textContent = "ERR";
+        elMins.textContent = "ERR";
+        elSecs.textContent = "ERR";
+        return;
+      }
+
+      const diff = target.getTime() - Date.now();
+
+      if (diff <= 0) {
+        elDays.textContent = "0";
+        elHours.textContent = "0";
+        elMins.textContent = "0";
+        elSecs.textContent = "0";
+        return;
+      }
+
+      const totalSeconds = Math.floor(diff / 1000);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      elDays.textContent = days;
+      elHours.textContent = hours;
+      elMins.textContent = minutes;
+      elSecs.textContent = seconds;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
