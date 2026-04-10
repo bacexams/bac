@@ -27,34 +27,6 @@
         <div id="pdf-container" class="pdf-container" aria-live="polite"></div>
       </section>
 
-      <aside class="timer-panel" aria-label="Minuteur de révision">
-        <div class="timer-heading">
-          <h3>Session chronométrée</h3>
-          <p>Règle ton temps comme à l’examen national.</p>
-        </div>
-
-        <div class="timer-card">
-          <span class="timer-kicker">Temps restant</span>
-          <div id="timer-display" class="timer-display" aria-live="polite">00:00:00</div>
-          <span id="timer-phase" class="timer-phase">Prêt à démarrer</span>
-        </div>
-
-        <div class="timer-card timer-card-config">
-          <p class="timer-label">Durée</p>
-          <div class="timer-inputs">
-            <label>Heures <input id="t-hours" type="number" min="0" value="0"></label>
-            <label>Minutes <input id="t-mins" type="number" min="0" max="59" value="60"></label>
-            <label>Secondes <input id="t-secs" type="number" min="0" max="59" value="0"></label>
-          </div>
-          <div class="timer-buttons">
-            <button id="t-start" type="button">Démarrer</button>
-            <button id="t-pause" type="button" disabled>Pause</button>
-            <button id="t-reset" type="button">Réinitialiser</button>
-          </div>
-        </div>
-
-        <p class="timer-note">La vraie difficulté de l’examen, c’est souvent la gestion du temps. Entraîne-toi avec ce minuteur pour améliorer ton rythme et finir dans les délais.</p>
-      </aside>
     </div>
 
     <script type="module">
@@ -195,104 +167,6 @@
       zoomOutBtn.addEventListener('click', () => rerenderWithZoom(zoomLevel - 0.1));
       zoomInBtn.addEventListener('click', () => rerenderWithZoom(zoomLevel + 0.1));
       zoomResetBtn.addEventListener('click', () => rerenderWithZoom(1.15));
-
-      // timer
-      const display = document.getElementById('timer-display');
-      const hIn = document.getElementById('t-hours');
-      const mIn = document.getElementById('t-mins');
-      const sIn = document.getElementById('t-secs');
-
-      const btnStart = document.getElementById('t-start');
-      const btnPause = document.getElementById('t-pause');
-      const btnReset = document.getElementById('t-reset');
-      const timerPhase = document.getElementById('timer-phase');
-
-      let intervalId = null;
-      let endTimeMs = null;
-      let remainingMs = 0;
-
-      function clamp(n, min, max) {
-        return Math.min(max, Math.max(min, n));
-      }
-
-      function readInputMs() {
-        const h = clamp(Number(hIn.value || 0), 0, 999);
-        const m = clamp(Number(mIn.value || 0), 0, 59);
-        const s = clamp(Number(sIn.value || 0), 0, 59);
-        return (h * 3600 + m * 60 + s) * 1000;
-      }
-
-      function format(ms) {
-        const safeMs = Math.max(0, ms);
-        const total = Math.ceil(safeMs / 1000);
-        const h = String(Math.floor(total / 3600)).padStart(2, '0');
-        const m = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
-        const s = String(total % 60).padStart(2, '0');
-        return `${h}:${m}:${s}`;
-      }
-
-      function render() {
-        const msLeft = endTimeMs ? (endTimeMs - Date.now()) : remainingMs;
-        display.textContent = format(msLeft);
-        display.classList.toggle('is-warning', msLeft > 0 && msLeft <= 5 * 60 * 1000);
-
-        if (endTimeMs && msLeft <= 0) {
-          stop();
-          remainingMs = 0;
-          display.textContent = '00:00:00';
-          timerPhase.textContent = 'Temps écoulé';
-          alert("Time's up!");
-        }
-      }
-
-      function start() {
-        if (intervalId) return;
-        if (!endTimeMs) {
-          remainingMs = readInputMs();
-        }
-        if (remainingMs <= 0) return;
-
-        endTimeMs = Date.now() + remainingMs;
-        intervalId = setInterval(render, 250);
-        render();
-
-        btnStart.disabled = true;
-        btnPause.disabled = false;
-        timerPhase.textContent = 'En cours';
-      }
-
-      function pause() {
-        if (!intervalId) return;
-        remainingMs = Math.max(0, endTimeMs - Date.now());
-        stop();
-
-        btnStart.disabled = false;
-        btnPause.disabled = true;
-        timerPhase.textContent = 'En pause';
-        render();
-      }
-
-      function reset() {
-        stop();
-        remainingMs = readInputMs();
-        btnStart.disabled = false;
-        btnPause.disabled = true;
-        timerPhase.textContent = 'Prêt à démarrer';
-        render();
-      }
-
-      function stop() {
-        clearInterval(intervalId);
-        intervalId = null;
-        endTimeMs = null;
-      }
-
-      btnStart.addEventListener('click', start);
-      btnPause.addEventListener('click', pause);
-      btnReset.addEventListener('click', reset);
-
-      remainingMs = readInputMs();
-      render();
 
       window.addEventListener('resize', () => {
         if (!pdfDoc) return;
