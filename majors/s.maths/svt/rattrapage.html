@@ -32,5 +32,16 @@
     <li><a href="../../../view-pdf.html?pdf=EXAMS/2BAC-PC/SVT/Rattrapage/Sujet2024.pdf"class="link-grid link-button">Rattrapage 2024</a></li>
     <li><a href="../../../view-pdf.html?pdf=EXAMS/2BAC-PC/SVT/Rattrapage/Sujet2025.pdf"class="link-grid link-button">Rattrapage 2025</a></li>
   </ul>
+  <script>
+    (() => {
+      const parts = window.location.pathname.split("/");
+      const majorsIndex = parts.lastIndexOf("majors");
+      const depthFromMajors = majorsIndex >= 0 ? (parts.length - majorsIndex - 2) : 0;
+      const script = document.createElement("script");
+      script.src = `${"../".repeat(depthFromMajors + 1)}exam-progress.js`;
+      script.defer = true;
+      document.body.appendChild(script);
+    })();
+  </script>
 </body>
 </html>

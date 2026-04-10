@@ -30,5 +30,16 @@
     <li class="exam-row"><a class="button" href="../../../../view-pdf.html?pdf=EXAMS/1bac/fes/HG/Rattrapage/Sujet2025.pdf">Rattrapage 2025</a> <a class="button" href="../../../../view-pdf.html?pdf=EXAMS/1bac/fes/HG/Rattrapage/Corr2025.pdf">Correction 2025</a></li>
     </ul>
   </div>
+  <script>
+    (() => {
+      const parts = window.location.pathname.split("/");
+      const majorsIndex = parts.lastIndexOf("majors");
+      const depthFromMajors = majorsIndex >= 0 ? (parts.length - majorsIndex - 2) : 0;
+      const script = document.createElement("script");
+      script.src = `${"../".repeat(depthFromMajors + 1)}exam-progress.js`;
+      script.defer = true;
+      document.body.appendChild(script);
+    })();
+  </script>
 </body>
 </html>
