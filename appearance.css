@@ -527,14 +527,41 @@ background: rgba(255,255,255,0.10);
 
 .exam-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 32px 1fr 1fr;
+  align-items: center;
+  gap: 12px;
   padding: 8px 0;
 }
 
 .exam-row .button{
   font-size: 0.98rem;
   padding: 12px;
+}
+
+.exam-check-toggle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #466080;
+  background: #0d1520;
+  color: #dff2ff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.exam-check-toggle:hover {
+  border-color: #7eb4ff;
+  transform: translateY(-1px);
+}
+
+.exam-check-toggle.is-done {
+  background: linear-gradient(135deg, #2caa72, #1f7d59);
+  border-color: #5fd6a1;
 }
 
 
@@ -737,6 +764,27 @@ width: 100%;
 .exam-done-button.exam-done {
   background: #1f6b4f;
   border-color: #29895f;
+}
+
+.session-progress-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.session-progress-badge {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  background: #14263a;
+  border: 1px solid #4f79ad;
+  color: #a8d2ff;
+  flex: 0 0 auto;
 }
 
 .exam-link-done {
