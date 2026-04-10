@@ -11,7 +11,8 @@
   function readStore() {
     try {
       return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    } catch {
+    }
+    catch {
       return {};
     }
   }
@@ -32,32 +33,60 @@
     return Boolean(store[normalizePdfPath(path)]);
   }
 
-  function markDone(path) {
+  function setDone(path, done) {
     const normalizedPath = normalizePdfPath(path);
     if (!normalizedPath) return;
 
     const store = readStore();
-    store[normalizedPath] = true;
+    if (done) {
+      store[normalizedPath] = true;
+    }
+    else {
+      delete store[normalizedPath];
+    }
 
     const correctionPath = getLinkedCorrectionPath(normalizedPath);
     if (correctionPath) {
-      store[correctionPath] = true;
+      if (done) {
+        store[correctionPath] = true;
+      }
+      else {
+        delete store[correctionPath];
+      }
     }
 
     writeStore(store);
+  }
+
+  function toggleDone(path) {
+    const done = isDone(path);
+    setDone(path, !done);
   }
 
   function getPdfPathFromHref(href) {
     try {
       const url = new URL(href, window.location.href);
       return normalizePdfPath(decodeURIComponent(url.searchParams.get('pdf') || ''));
-    } catch {
+    }
+    catch {
       return '';
     }
   }
 
   function isSubjectPdfPath(path) {
     return /\/Sujet\d{4}\.pdf$/i.test(normalizePdfPath(path));
+  }
+
+  function buildProgressData(paths) {
+    const total = paths.length;
+    let doneCount = 0;
+
+    paths.forEach((path) => {
+      if (isDone(path)) doneCount += 1;
+    });
+
+    const percentage = total ? Math.round((doneCount / total) * 100) : 0;
+    return { doneCount, total, percentage };
   }
 
   function enhanceExamListPage() {
@@ -92,47 +121,113 @@
 
     const entries = examLinks.map((link) => {
       const path = getPdfPathFromHref(link.href);
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'button-mini exam-done-button';
-      button.textContent = 'Marquer terminé';
+      const line = link.closest('.exam-row') || link.parentElement;
 
-      button.addEventListener('click', (event) => {
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'exam-check-toggle';
+      toggle.setAttribute('aria-label', 'Basculer terminé');
+
+      if (line && line.firstElementChild !== toggle) {
+        line.insertBefore(toggle, line.firstChild);
+      }
+      else {
+        link.insertAdjacentElement('beforebegin', toggle);
+      }
+
+      toggle.addEventListener('click', (event) => {
         event.preventDefault();
-        markDone(path);
+        toggleDone(path);
         refresh();
       });
 
-      link.insertAdjacentElement('afterend', button);
-      return { link, path, button };
+      return { link, path, toggle };
     });
 
     function refresh() {
-      let doneCount = 0;
+      const progress = buildProgressData(entries.map((entry) => entry.path));
 
-      entries.forEach(({ link, path, button }) => {
+      entries.forEach(({ link, path, toggle }) => {
         const done = isDone(path);
         link.classList.toggle('exam-link-done', done);
-        button.classList.toggle('exam-done', done);
-        button.textContent = done ? 'Terminé ✓' : 'Marquer terminé';
-        button.disabled = done;
-
-        if (done) doneCount += 1;
+        toggle.classList.toggle('is-done', done);
+        toggle.setAttribute('aria-pressed', done ? 'true' : 'false');
+        toggle.textContent = done ? '✓' : '';
       });
 
-      const total = entries.length;
-      const percentage = total ? Math.round((doneCount / total) * 100) : 0;
       const fill = progressWrap.querySelector('.exam-progress-fill');
       const label = progressWrap.querySelector('.exam-progress-label');
       const track = progressWrap.querySelector('.exam-progress-track');
 
-      fill.style.width = `${percentage}%`;
-      label.textContent = `${percentage}% (${doneCount}/${total})`;
-      track.setAttribute('aria-valuenow', String(percentage));
+      fill.style.width = `${progress.percentage}%`;
+      label.textContent = `${progress.percentage}% (${progress.doneCount}/${progress.total})`;
+      track.setAttribute('aria-valuenow', String(progress.percentage));
     }
 
     refresh();
     window.addEventListener('storage', refresh);
+  }
+
+  function extractSubjectPathsFromDocument(doc, baseUrl) {
+    const subjectLinks = Array.from(doc.querySelectorAll('a[href*="view-pdf.html?pdf="]'));
+    return subjectLinks
+      .map((link) => {
+        try {
+          const absolute = new URL(link.getAttribute('href') || '', baseUrl).href;
+          return getPdfPathFromHref(absolute);
+        }
+        catch {
+          return '';
+        }
+      })
+      .filter((path) => isSubjectPdfPath(path));
+  }
+
+  async function buildProgressBadgeForLink(link) {
+    const href = link.getAttribute('href');
+    if (!href) return;
+
+    const looksLikeSessionLink = /(?:^|\/)normale\.html$|(?:^|\/)rattrapage\.html$|(?:^|\/)ratrapage\.html$/i.test(href) || /normale|rattrapage/i.test(link.textContent || '');
+    if (!looksLikeSessionLink) return;
+
+    let targetUrl;
+    try {
+      targetUrl = new URL(href, window.location.href);
+    }
+    catch {
+      return;
+    }
+
+    try {
+      const response = await fetch(targetUrl.href, { credentials: 'same-origin' });
+      if (!response.ok) return;
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const subjectPaths = extractSubjectPathsFromDocument(doc, targetUrl.href);
+      if (!subjectPaths.length) return;
+
+      const progress = buildProgressData(subjectPaths);
+
+      const badge = document.createElement('span');
+      badge.className = 'session-progress-badge';
+      badge.textContent = `${progress.percentage}%`;
+      badge.title = `${progress.doneCount}/${progress.total} terminés`;
+
+      link.classList.add('session-progress-link');
+      link.prepend(badge);
+    }
+    catch {
+      // Ignore silent failure so this doesn't break navigation pages.
+    }
+  }
+
+  function enhanceSessionProgressLinks() {
+    const links = Array.from(document.querySelectorAll('a[href]'));
+    const uniqueLinks = links.filter((link) => !link.querySelector('.session-progress-badge'));
+    if (!uniqueLinks.length) return;
+
+    Promise.all(uniqueLinks.map((link) => buildProgressBadgeForLink(link)));
   }
 
   function enhancePdfViewerPage() {
@@ -142,7 +237,8 @@
     let pdfPath = rawPdf;
     try {
       pdfPath = decodeURIComponent(rawPdf);
-    } catch {
+    }
+    catch {
       pdfPath = rawPdf;
     }
     pdfPath = normalizePdfPath(pdfPath);
@@ -161,7 +257,6 @@
       const done = isDone(pdfPath);
       doneBtn.classList.toggle('exam-done', done);
       doneBtn.textContent = done ? 'Terminé ✓' : 'Marquer terminé';
-      doneBtn.disabled = done;
 
       if (done && status && status.textContent && !status.textContent.includes('• Terminé')) {
         status.textContent = `${status.textContent} • Terminé`;
@@ -169,7 +264,7 @@
     }
 
     doneBtn.addEventListener('click', () => {
-      markDone(pdfPath);
+      toggleDone(pdfPath);
       refresh();
     });
 
@@ -179,5 +274,6 @@
   }
 
   enhanceExamListPage();
+  enhanceSessionProgressLinks();
   enhancePdfViewerPage();
 })();
