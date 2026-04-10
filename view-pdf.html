@@ -27,25 +27,33 @@
         <div id="pdf-container" class="pdf-container" aria-live="polite"></div>
       </section>
 
-      <aside class="timer-panel">
-        <h3>Minuteur</h3>
-
-        <div id="timer-display" class="timer-display">00:00:00</div>
-
-        <div class="timer-inputs">
-          <label>Hrs <input id="t-hours" type="number" min="0" value="0"></label>
-          <label>Min <input id="t-mins" type="number" min="0" max="59" value="60"></label>
-          <label>Sec <input id="t-secs" type="number" min="0" max="59" value="0"></label>
+      <aside class="timer-panel" aria-label="Minuteur de révision">
+        <div class="timer-heading">
+          <h3>Session chronométrée</h3>
+          <p>Règle ton temps comme à l’examen national.</p>
         </div>
 
-        <div class="timer-buttons">
-          <button id="t-start">►</button>
-          <button id="t-pause" disabled>⏹</button>
-          <button id="t-reset">⭯</button>
-
-          <hr class="timer-sep">
+        <div class="timer-card">
+          <span class="timer-kicker">Temps restant</span>
+          <div id="timer-display" class="timer-display" aria-live="polite">00:00:00</div>
+          <span id="timer-phase" class="timer-phase">Prêt à démarrer</span>
         </div>
-        <p class="timer-note">« La vraie difficulté de l’examen national, c’est le temps très limité. Beaucoup d’élèves connaissent bien le cours, mais n’arrivent pas à finir à cause d’une mauvaise gestion du temps. Entraîne-toi avec un chronomètre et essaie de t’améliorer à chaque fois. »</p>
+
+        <div class="timer-card timer-card-config">
+          <p class="timer-label">Durée</p>
+          <div class="timer-inputs">
+            <label>Heures <input id="t-hours" type="number" min="0" value="0"></label>
+            <label>Minutes <input id="t-mins" type="number" min="0" max="59" value="60"></label>
+            <label>Secondes <input id="t-secs" type="number" min="0" max="59" value="0"></label>
+          </div>
+          <div class="timer-buttons">
+            <button id="t-start" type="button">Démarrer</button>
+            <button id="t-pause" type="button" disabled>Pause</button>
+            <button id="t-reset" type="button">Réinitialiser</button>
+          </div>
+        </div>
+
+        <p class="timer-note">La vraie difficulté de l’examen, c’est souvent la gestion du temps. Entraîne-toi avec ce minuteur pour améliorer ton rythme et finir dans les délais.</p>
       </aside>
     </div>
 
@@ -197,6 +205,7 @@
       const btnStart = document.getElementById('t-start');
       const btnPause = document.getElementById('t-pause');
       const btnReset = document.getElementById('t-reset');
+      const timerPhase = document.getElementById('timer-phase');
 
       let intervalId = null;
       let endTimeMs = null;
@@ -225,11 +234,13 @@
       function render() {
         const msLeft = endTimeMs ? (endTimeMs - Date.now()) : remainingMs;
         display.textContent = format(msLeft);
+        display.classList.toggle('is-warning', msLeft > 0 && msLeft <= 5 * 60 * 1000);
 
         if (endTimeMs && msLeft <= 0) {
           stop();
           remainingMs = 0;
           display.textContent = '00:00:00';
+          timerPhase.textContent = 'Temps écoulé';
           alert("Time's up!");
         }
       }
@@ -247,6 +258,7 @@
 
         btnStart.disabled = true;
         btnPause.disabled = false;
+        timerPhase.textContent = 'En cours';
       }
 
       function pause() {
@@ -256,6 +268,7 @@
 
         btnStart.disabled = false;
         btnPause.disabled = true;
+        timerPhase.textContent = 'En pause';
         render();
       }
 
@@ -264,6 +277,7 @@
         remainingMs = readInputMs();
         btnStart.disabled = false;
         btnPause.disabled = true;
+        timerPhase.textContent = 'Prêt à démarrer';
         render();
       }
 
