@@ -8,126 +8,282 @@
   </head>
 
   <body>
-
     <div class="exam-layout">
-      <iframe id="pdf-viewer" class="pdf-frame"></iframe>
+      <section class="pdf-reader" aria-label="PDF reader">
+        <header class="pdf-toolbar">
+          <div class="pdf-toolbar-left">
+            <strong id="pdf-title">Document PDF</strong>
+            <span id="pdf-status" role="status" aria-live="polite">Chargement…</span>
+          </div>
 
+          <div class="pdf-toolbar-actions">
+            <button id="zoom-out" class="button-mini" type="button" aria-label="Zoom out">−</button>
+            <button id="zoom-reset" class="button-mini" type="button" aria-label="Reset zoom">100%</button>
+            <button id="zoom-in" class="button-mini" type="button" aria-label="Zoom in">+</button>
+            <a id="open-native" class="button-mini button-mini-link" href="#" target="_blank" rel="noopener">Open</a>
+          </div>
+        </header>
 
-     <aside class="timer-panel">
-  <h3>Minuteur</h3>
+        <div id="pdf-container" class="pdf-container" aria-live="polite"></div>
+      </section>
 
-  <div id="timer-display" class="timer-display">00:00:00</div>
+      <aside class="timer-panel">
+        <h3>Minuteur</h3>
 
-  <div class="timer-inputs">
-    <label>Hrs <input id="t-hours" type="number" min="0" value="0"></label>
-    <label>Min <input id="t-mins"  type="number" min="0" max="59" value="60"></label>
-    <label>Sec <input id="t-secs"  type="number" min="0" max="59" value="0"></label>
-  </div>
+        <div id="timer-display" class="timer-display">00:00:00</div>
 
-  <div class="timer-buttons">
-    <button id="t-start">►</button>
-    <button id="t-pause" disabled>⏹</button>
-    <button id="t-reset">⭯</button>
+        <div class="timer-inputs">
+          <label>Hrs <input id="t-hours" type="number" min="0" value="0"></label>
+          <label>Min <input id="t-mins" type="number" min="0" max="59" value="60"></label>
+          <label>Sec <input id="t-secs" type="number" min="0" max="59" value="0"></label>
+        </div>
 
-    <hr class="timer-sep">
-  </div>
-       <p class="timer-note">
-« La vraie difficulté de l’examen national, c’est le temps très limité. Beaucoup d’élèves connaissent bien le cours, mais n’arrivent pas à finir à cause d’une mauvaise gestion du temps. Entraîne-toi avec un chronomètre et essaie de t’améliorer à chaque fois. »</p>
-</aside>
+        <div class="timer-buttons">
+          <button id="t-start">►</button>
+          <button id="t-pause" disabled>⏹</button>
+          <button id="t-reset">⭯</button>
+
+          <hr class="timer-sep">
+        </div>
+        <p class="timer-note">« La vraie difficulté de l’examen national, c’est le temps très limité. Beaucoup d’élèves connaissent bien le cours, mais n’arrivent pas à finir à cause d’une mauvaise gestion du temps. Entraîne-toi avec un chronomètre et essaie de t’améliorer à chaque fois. »</p>
+      </aside>
     </div>
 
-    <script>
-  const urlParams = new URLSearchParams(window.location.search);
-  const pdfPath = urlParams.get('pdf');
-  document.getElementById('pdf-viewer').src = pdfPath;
-  const display = document.getElementById('timer-display');
-  const hIn = document.getElementById('t-hours');
-  const mIn = document.getElementById('t-mins');
-  const sIn = document.getElementById('t-secs');
+    <script type="module">
+      import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.min.mjs';
 
-  const btnStart = document.getElementById('t-start');
-  const btnPause = document.getElementById('t-pause');
-  const btnReset = document.getElementById('t-reset');
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.worker.min.mjs';
 
-  let intervalId = null;
-  let endTimeMs = null;
-  let remainingMs = 0;
+      const urlParams = new URLSearchParams(window.location.search);
+      const rawPdfPath = urlParams.get('pdf') || '';
 
-  function clamp(n, min, max){ return Math.min(max, Math.max(min, n)); }
+      const decodedPdfPath = (() => {
+        try {
+          return decodeURIComponent(rawPdfPath);
+        } catch {
+          return rawPdfPath;
+        }
+      })();
 
-  function readInputMs(){
-    const h = clamp(Number(hIn.value || 0), 0, 999);
-    const m = clamp(Number(mIn.value || 0), 0, 59);
-    const s = clamp(Number(sIn.value || 0), 0, 59);
-    return (h * 3600 + m * 60 + s) * 1000;
-  }
+      const titleEl = document.getElementById('pdf-title');
+      const statusEl = document.getElementById('pdf-status');
+      const containerEl = document.getElementById('pdf-container');
+      const openNativeEl = document.getElementById('open-native');
+      const zoomOutBtn = document.getElementById('zoom-out');
+      const zoomInBtn = document.getElementById('zoom-in');
+      const zoomResetBtn = document.getElementById('zoom-reset');
 
-  function format(ms){
-    ms = Math.max(0, ms);
-    const total = Math.ceil(ms / 1000);
-    const h = String(Math.floor(total / 3600)).padStart(2,'0');
-    const m = String(Math.floor((total % 3600) / 60)).padStart(2,'0');
-    const s = String(total % 60).padStart(2,'0');
-    return `${h}:${m}:${s}`;
-  }
+      const pageCanvases = [];
+      let pdfDoc = null;
+      let zoomLevel = 1.15;
+      let isRendering = false;
 
-  function render(){
-    const msLeft = endTimeMs ? (endTimeMs - Date.now()) : remainingMs;
-    display.textContent = format(msLeft);
+      const isValidPdfPath = decodedPdfPath.toLowerCase().endsWith('.pdf');
 
-    if (endTimeMs && msLeft <= 0){
-      stop();
-      remainingMs = 0;
-      display.textContent = "00:00:00";
-      alert("Time's up!");
-    }
-  }
+      if (!isValidPdfPath) {
+        statusEl.textContent = 'PDF introuvable. Vérifie le lien.';
+        containerEl.innerHTML = '<p class="pdf-error">Le fichier PDF est manquant ou invalide.</p>';
+      } else {
+        const safePath = decodedPdfPath.replace(/\\/g, '/');
+        const fileName = safePath.split('/').pop() || 'Document PDF';
 
-  function start(){
-    if (intervalId) return;
-    if (!endTimeMs){
+        titleEl.textContent = fileName;
+        openNativeEl.href = safePath;
+
+        loadPdf(safePath);
+      }
+
+      async function loadPdf(path) {
+        statusEl.textContent = 'Chargement du document…';
+
+        try {
+          const loadingTask = pdfjsLib.getDocument({ url: path, withCredentials: false });
+          pdfDoc = await loadingTask.promise;
+
+          statusEl.textContent = `${pdfDoc.numPages} pages`;
+          await renderAllPages();
+        } catch (error) {
+          console.error('PDF loading error:', error);
+          statusEl.textContent = 'Impossible de charger ce PDF.';
+          containerEl.innerHTML = `
+            <p class="pdf-error">Ce document ne peut pas être affiché ici.</p>
+            <p class="pdf-error-sub">Essaie le bouton <strong>Open</strong> pour l’ouvrir directement dans le navigateur.</p>
+          `;
+        }
+      }
+
+      function createPageShell(pageNumber) {
+        const wrapper = document.createElement('section');
+        wrapper.className = 'pdf-page-wrapper';
+
+        const label = document.createElement('div');
+        label.className = 'pdf-page-label';
+        label.textContent = `Page ${pageNumber}`;
+
+        const canvas = document.createElement('canvas');
+        canvas.className = 'pdf-canvas';
+        canvas.dataset.pageNumber = String(pageNumber);
+
+        wrapper.append(label, canvas);
+        containerEl.appendChild(wrapper);
+
+        return canvas;
+      }
+
+      async function renderAllPages() {
+        if (!pdfDoc || isRendering) return;
+        isRendering = true;
+
+        containerEl.innerHTML = '';
+        pageCanvases.length = 0;
+
+        for (let pageNumber = 1; pageNumber <= pdfDoc.numPages; pageNumber += 1) {
+          const canvas = createPageShell(pageNumber);
+          pageCanvases.push(canvas);
+          await renderPage(pageNumber, canvas);
+        }
+
+        isRendering = false;
+      }
+
+      async function renderPage(pageNumber, canvas) {
+        const page = await pdfDoc.getPage(pageNumber);
+        const viewport = page.getViewport({ scale: zoomLevel });
+
+        const maxWidth = containerEl.clientWidth - 24;
+        const fitScale = maxWidth / viewport.width;
+        const finalScale = Math.min(zoomLevel, zoomLevel * fitScale < zoomLevel ? zoomLevel * fitScale : zoomLevel);
+        const finalViewport = page.getViewport({ scale: finalScale });
+
+        const dpr = Math.max(window.devicePixelRatio || 1, 1);
+        const context = canvas.getContext('2d', { alpha: false });
+
+        canvas.width = Math.floor(finalViewport.width * dpr);
+        canvas.height = Math.floor(finalViewport.height * dpr);
+        canvas.style.width = `${Math.floor(finalViewport.width)}px`;
+        canvas.style.height = `${Math.floor(finalViewport.height)}px`;
+
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        await page.render({ canvasContext: context, viewport: finalViewport }).promise;
+      }
+
+      async function rerenderWithZoom(nextZoom) {
+        if (!pdfDoc || isRendering) return;
+        zoomLevel = Math.min(2.3, Math.max(0.8, nextZoom));
+        zoomResetBtn.textContent = `${Math.round(zoomLevel * 100)}%`;
+
+        isRendering = true;
+        statusEl.textContent = 'Mise à jour du zoom…';
+
+        for (let i = 0; i < pageCanvases.length; i += 1) {
+          await renderPage(i + 1, pageCanvases[i]);
+        }
+
+        isRendering = false;
+        statusEl.textContent = `${pdfDoc.numPages} pages`;
+      }
+
+      zoomOutBtn.addEventListener('click', () => rerenderWithZoom(zoomLevel - 0.1));
+      zoomInBtn.addEventListener('click', () => rerenderWithZoom(zoomLevel + 0.1));
+      zoomResetBtn.addEventListener('click', () => rerenderWithZoom(1.15));
+
+      // timer
+      const display = document.getElementById('timer-display');
+      const hIn = document.getElementById('t-hours');
+      const mIn = document.getElementById('t-mins');
+      const sIn = document.getElementById('t-secs');
+
+      const btnStart = document.getElementById('t-start');
+      const btnPause = document.getElementById('t-pause');
+      const btnReset = document.getElementById('t-reset');
+
+      let intervalId = null;
+      let endTimeMs = null;
+      let remainingMs = 0;
+
+      function clamp(n, min, max) {
+        return Math.min(max, Math.max(min, n));
+      }
+
+      function readInputMs() {
+        const h = clamp(Number(hIn.value || 0), 0, 999);
+        const m = clamp(Number(mIn.value || 0), 0, 59);
+        const s = clamp(Number(sIn.value || 0), 0, 59);
+        return (h * 3600 + m * 60 + s) * 1000;
+      }
+
+      function format(ms) {
+        const safeMs = Math.max(0, ms);
+        const total = Math.ceil(safeMs / 1000);
+        const h = String(Math.floor(total / 3600)).padStart(2, '0');
+        const m = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
+        const s = String(total % 60).padStart(2, '0');
+        return `${h}:${m}:${s}`;
+      }
+
+      function render() {
+        const msLeft = endTimeMs ? (endTimeMs - Date.now()) : remainingMs;
+        display.textContent = format(msLeft);
+
+        if (endTimeMs && msLeft <= 0) {
+          stop();
+          remainingMs = 0;
+          display.textContent = '00:00:00';
+          alert("Time's up!");
+        }
+      }
+
+      function start() {
+        if (intervalId) return;
+        if (!endTimeMs) {
+          remainingMs = readInputMs();
+        }
+        if (remainingMs <= 0) return;
+
+        endTimeMs = Date.now() + remainingMs;
+        intervalId = setInterval(render, 250);
+        render();
+
+        btnStart.disabled = true;
+        btnPause.disabled = false;
+      }
+
+      function pause() {
+        if (!intervalId) return;
+        remainingMs = Math.max(0, endTimeMs - Date.now());
+        stop();
+
+        btnStart.disabled = false;
+        btnPause.disabled = true;
+        render();
+      }
+
+      function reset() {
+        stop();
+        remainingMs = readInputMs();
+        btnStart.disabled = false;
+        btnPause.disabled = true;
+        render();
+      }
+
+      function stop() {
+        clearInterval(intervalId);
+        intervalId = null;
+        endTimeMs = null;
+      }
+
+      btnStart.addEventListener('click', start);
+      btnPause.addEventListener('click', pause);
+      btnReset.addEventListener('click', reset);
+
       remainingMs = readInputMs();
-    }
-    if (remainingMs <= 0) return;
+      render();
 
-    endTimeMs = Date.now() + remainingMs;
-    intervalId = setInterval(render, 250);
-    render();
-
-    btnStart.disabled = true;
-    btnPause.disabled = false;
-  }
-
-  function pause(){
-    if (!intervalId) return;
-    remainingMs = Math.max(0, endTimeMs - Date.now());
-    stop();
-
-    btnStart.disabled = false;
-    btnPause.disabled = true;
-    render();
-  }
-
-  function reset(){
-    stop();
-    remainingMs = readInputMs();
-    btnStart.disabled = false;
-    btnPause.disabled = true;
-    render();
-  }
-
-  function stop(){
-    clearInterval(intervalId);
-    intervalId = null;
-    endTimeMs = null;
-  }
-
-  btnStart.addEventListener('click', start);
-  btnPause.addEventListener('click', pause);
-  btnReset.addEventListener('click', reset);
-
-  remainingMs = readInputMs();
-  render();
-</script>
+      window.addEventListener('resize', () => {
+        if (!pdfDoc) return;
+        rerenderWithZoom(zoomLevel);
+      });
+    </script>
   </body>
 </html>
