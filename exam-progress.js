@@ -56,8 +56,15 @@
     }
   }
 
+  function isSubjectPdfPath(path) {
+    return /\/Sujet\d{4}\.pdf$/i.test(normalizePdfPath(path));
+  }
+
   function enhanceExamListPage() {
-    const examLinks = Array.from(document.querySelectorAll('.exam-list .exam-row a[href*="view-pdf.html?pdf="]'));
+    const examLinks = Array.from(document.querySelectorAll('a[href*="view-pdf.html?pdf="]')).filter((link) => {
+      const path = getPdfPathFromHref(link.href);
+      return isSubjectPdfPath(path);
+    });
     if (!examLinks.length) return;
 
     const pageWrap = document.querySelector('.page-wrap');
@@ -75,12 +82,12 @@
       </div>
     `;
 
-    if (pageWrap) {
-      if (heading && heading.parentNode === pageWrap) {
-        heading.insertAdjacentElement('afterend', progressWrap);
-      } else {
-        pageWrap.prepend(progressWrap);
-      }
+    const progressContainer = pageWrap || document.body;
+    if (heading && heading.parentNode === progressContainer) {
+      heading.insertAdjacentElement('afterend', progressWrap);
+    }
+    else {
+      progressContainer.prepend(progressWrap);
     }
 
     const entries = examLinks.map((link) => {
