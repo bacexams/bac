@@ -30,16 +30,6 @@
     <li><a class="button" href="../../view-pdf.html?pdf=EXAMS/Philosophie/Normale/Sujet2024.pdf">Normale 2024</a></li>
     <li><a class="button" href="../../view-pdf.html?pdf=EXAMS/Philosophie/Normale/Sujet2025.pdf">Normale 2025</a></li>
   </ul>
-  <script>
-    (() => {
-      const parts = window.location.pathname.split("/");
-      const majorsIndex = parts.lastIndexOf("majors");
-      const depthFromMajors = majorsIndex >= 0 ? (parts.length - majorsIndex - 2) : 0;
-      const script = document.createElement("script");
-      script.src = `${"../".repeat(depthFromMajors + 1)}exam-progress.js`;
-      script.defer = true;
-      document.body.appendChild(script);
-    })();
-  </script>
+  <script src="/exam-progress.js" defer></script>
 </body>
 </html>
