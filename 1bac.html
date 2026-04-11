@@ -22,20 +22,19 @@
       </div>
     </div>
 
-    <section class="student-panel-grid" aria-label="Student tools">
-      <article class="glass-card">
-        <h2>Thème</h2>
-        <label class="theme-select-label" for="theme-select">Couleur</label>
-        <select id="theme-select" class="theme-select" aria-label="Choisir une couleur de thème">
-          <option value="theme-bleu">Bleu</option>
-          <option value="theme-violet">Violet</option>
-          <option value="theme-clair">Clair</option>
-          <option value="theme-vert">Vert</option>
-          <option value="theme-rose">Rose</option>
-        </select>
-      </article>
+    <div class="theme-menu" aria-label="Choix du thème">
+      <button type="button" id="theme-toggle" class="theme-toggle" aria-expanded="false" aria-controls="theme-options">Theme</button>
+      <div id="theme-options" class="theme-options" hidden>
+        <button type="button" class="theme-swatch" data-theme="theme-bleu" aria-label="Thème Bleu"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-violet" aria-label="Thème Violet"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-clair" aria-label="Thème Clair"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-vert" aria-label="Thème Vert"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-rose" aria-label="Thème Rose"></button>
+      </div>
+    </div>
 
-      <article class="glass-card">
+    <section class="student-panel-grid" aria-label="Student tools">
+      <article class="glass-card todo-card">
         <h2>Today’s Study Plan</h2>
         <form id="todo-form" class="todo-form" autocomplete="off">
           <input id="todo-input" type="text" maxlength="120" placeholder="Ajouter une tâche (ex: Réviser HG chapitre 2)">
@@ -87,6 +86,14 @@
       const form = document.getElementById('todo-form');
       const input = document.getElementById('todo-input');
       const list = document.getElementById('todo-list');
+      const TO_COLLAPSE_AT = 6;
+      let expanded = false;
+
+      const toggleAll = document.createElement('button');
+      toggleAll.type = 'button';
+      toggleAll.className = 'todo-toggle-all';
+      toggleAll.hidden = true;
+      list.insertAdjacentElement('afterend', toggleAll);
 
       function read() {
         try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; }
@@ -98,8 +105,10 @@
 
       function render() {
         const items = read();
+        const visibleItems = expanded ? items : items.slice(0, TO_COLLAPSE_AT);
         list.innerHTML = '';
-        items.forEach((item) => {
+
+        visibleItems.forEach((item) => {
           const li = document.createElement('li');
           li.className = 'todo-item';
           li.innerHTML = `
@@ -113,13 +122,28 @@
             write(items);
             render();
           });
+
           li.querySelector('.todo-delete').addEventListener('click', () => {
             write(items.filter((entry) => entry.id !== item.id));
             render();
           });
           list.appendChild(li);
         });
+
+        const hiddenCount = items.length - TO_COLLAPSE_AT;
+        if (hiddenCount > 0) {
+          toggleAll.hidden = false;
+          toggleAll.textContent = expanded ? 'Afficher moins' : `Voir toutes les tâches (${hiddenCount})`;
+        } else {
+          toggleAll.hidden = true;
+          expanded = false;
+        }
       }
+
+      toggleAll.addEventListener('click', () => {
+        expanded = !expanded;
+        render();
+      });
 
       form.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -127,7 +151,7 @@
         if (!text) return;
         const items = read();
         items.unshift({ id: crypto.randomUUID(), text, done: false });
-        write(items.slice(0, 8));
+        write(items.slice(0, 20));
         input.value = '';
         render();
       });

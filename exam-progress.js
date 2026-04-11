@@ -101,24 +101,62 @@
 
   function initGlobalTheme() {
     const savedTheme = localStorage.getItem(THEME_KEY) || DEFAULT_THEME;
-    const activeTheme = applyTheme(savedTheme);
-    const select = document.getElementById('theme-select');
 
-    if (select) {
-      select.value = activeTheme;
-      select.addEventListener('change', () => {
-        const next = applyTheme(select.value);
-        localStorage.setItem(THEME_KEY, next);
+    const swatches = Array.from(document.querySelectorAll('.theme-swatch[data-theme]'));
+    const toggle = document.getElementById('theme-toggle');
+    const options = document.getElementById('theme-options');
+
+    function syncThemeControls(activeTheme) {
+      swatches.forEach((swatch) => {
+        const isActive = swatch.dataset.theme === activeTheme;
+        swatch.classList.toggle('is-active', isActive);
+        swatch.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+    }
+
+    function setTheme(themeName, persist = true) {
+      const next = applyTheme(themeName);
+      syncThemeControls(next);
+      if (persist) localStorage.setItem(THEME_KEY, next);
+      return next;
+    }
+
+    setTheme(savedTheme, false);
+
+    swatches.forEach((swatch) => {
+      swatch.addEventListener('click', () => {
+        setTheme(swatch.dataset.theme || DEFAULT_THEME);
+      });
+    });
+
+    if (toggle && options) {
+      toggle.addEventListener('click', () => {
+        const isOpen = !options.hasAttribute('hidden');
+        if (isOpen) {
+          options.setAttribute('hidden', '');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+        else {
+          options.removeAttribute('hidden');
+          toggle.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      document.addEventListener('click', (event) => {
+        if (!options.contains(event.target) && event.target !== toggle) {
+          options.setAttribute('hidden', '');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
       });
     }
 
     window.addEventListener('storage', (event) => {
       if (event.key === THEME_KEY) {
-        const syncedTheme = applyTheme(event.newValue || DEFAULT_THEME);
-        if (select) select.value = syncedTheme;
+        setTheme(event.newValue || DEFAULT_THEME, false);
       }
     });
   }
+
 
   function enhanceExamListPage() {
     const examLinks = Array.from(document.querySelectorAll('a[href*="view-pdf.html?pdf="]')).filter((link) => {
@@ -243,7 +281,6 @@
       const badge = document.createElement('span');
       badge.className = 'session-progress-badge';
       badge.style.setProperty('--progress', `${progress.percentage}%`);
-      badge.textContent = `${progress.percentage}%`;
       badge.title = `${progress.doneCount}/${progress.total} terminés`;
 
       link.classList.add('session-progress-link');
