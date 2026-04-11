@@ -834,6 +834,92 @@ body{
   --accent: #ff9bd0;
 }
 
+.theme-orange{
+  --bg-bottom: #261307;
+  --surface: rgba(255,150,61,0.12);
+  --surface-strong: rgba(255,164,82,0.18);
+  --border: rgba(255,190,130,0.35);
+  --accent: #ffb066;
+}
+
+.theme-rouge{
+  --bg-bottom: #2a0b10;
+  --surface: rgba(224,86,98,0.14);
+  --surface-strong: rgba(224,86,98,0.2);
+  --border: rgba(255,149,164,0.33);
+  --accent: #ff7c8f;
+}
+
+.theme-ciel{
+  --bg-bottom: #dff4ff;
+  --surface: rgba(255,255,255,0.72);
+  --surface-strong: rgba(255,255,255,0.9);
+  --border: rgba(35,87,114,0.2);
+  --text: #0d2b3f;
+  --muted: #3f6279;
+  --accent: #4fc3f7;
+}
+
+.theme-noir{
+  --bg-bottom: #050505;
+  --surface: rgba(255,255,255,0.05);
+  --surface-strong: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.15);
+  --accent: #b5bcc8;
+}
+
+.theme-gold{
+  --bg-bottom: #2a2107;
+  --surface: rgba(228,190,90,0.14);
+  --surface-strong: rgba(228,190,90,0.2);
+  --border: rgba(244,216,141,0.34);
+  --accent: #f2c94c;
+}
+
+.theme-clair .main-title,
+.theme-clair .main-sub,
+.theme-clair .section-title,
+.theme-clair h1:not(.main-title),
+.theme-ciel .main-title,
+.theme-ciel .main-sub,
+.theme-ciel .section-title,
+.theme-ciel h1:not(.main-title){
+  color: #10263f;
+  text-shadow: none;
+}
+
+.theme-clair .timebox .num,
+.theme-clair .timebox .label,
+.theme-clair #pdf-title,
+.theme-clair #pdf-status,
+.theme-clair .button-mini,
+.theme-clair .pdf-page-label,
+.theme-ciel .timebox .num,
+.theme-ciel .timebox .label,
+.theme-ciel #pdf-title,
+.theme-ciel #pdf-status,
+.theme-ciel .button-mini,
+.theme-ciel .pdf-page-label{
+  color: #173753;
+}
+
+.theme-clair .pdf-toolbar,
+.theme-ciel .pdf-toolbar{
+  background: rgba(236,245,255,0.92);
+  border-bottom: 1px solid rgba(35,87,114,0.18);
+}
+
+.theme-clair .button-mini,
+.theme-ciel .button-mini{
+  border: 1px solid rgba(35,87,114,0.25);
+  background: rgba(211,231,255,0.75);
+}
+
+.theme-clair .button-mini:hover,
+.theme-ciel .button-mini:hover{
+  background: rgba(194,220,250,0.9);
+}
+
 .student-panel-grid{
   margin: 14px auto 0;
   display: grid;
@@ -877,7 +963,7 @@ body{
 .theme-options{
   margin-top: 8px;
   display: grid;
-  grid-template-columns: 26px;
+  grid-template-columns: repeat(2, 26px);
   gap: 8px;
   padding: 8px;
   border-radius: 14px;
@@ -893,7 +979,7 @@ body{
 }
 
 .theme-options.is-open{
-  max-height: 220px;
+  max-height: 360px;
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
@@ -920,11 +1006,21 @@ body{
 .theme-swatch[data-theme="theme-clair"]{ background: #e6efff; }
 .theme-swatch[data-theme="theme-vert"]{ background: #7bf0bf; }
 .theme-swatch[data-theme="theme-rose"]{ background: #ff9bd0; }
-.theme-options.is-open .theme-swatch:nth-child(1){ transition-delay: 40ms; }
-.theme-options.is-open .theme-swatch:nth-child(2){ transition-delay: 80ms; }
-.theme-options.is-open .theme-swatch:nth-child(3){ transition-delay: 120ms; }
-.theme-options.is-open .theme-swatch:nth-child(4){ transition-delay: 160ms; }
-.theme-options.is-open .theme-swatch:nth-child(5){ transition-delay: 200ms; }
+.theme-swatch[data-theme="theme-orange"]{ background: #ffb066; }
+.theme-swatch[data-theme="theme-rouge"]{ background: #ff7c8f; }
+.theme-swatch[data-theme="theme-ciel"]{ background: #7fdcff; }
+.theme-swatch[data-theme="theme-noir"]{ background: #171717; }
+.theme-swatch[data-theme="theme-gold"]{ background: #f2c94c; }
+.theme-options.is-open .theme-swatch:nth-child(1){ transition-delay: 30ms; }
+.theme-options.is-open .theme-swatch:nth-child(2){ transition-delay: 60ms; }
+.theme-options.is-open .theme-swatch:nth-child(3){ transition-delay: 90ms; }
+.theme-options.is-open .theme-swatch:nth-child(4){ transition-delay: 120ms; }
+.theme-options.is-open .theme-swatch:nth-child(5){ transition-delay: 150ms; }
+.theme-options.is-open .theme-swatch:nth-child(6){ transition-delay: 180ms; }
+.theme-options.is-open .theme-swatch:nth-child(7){ transition-delay: 210ms; }
+.theme-options.is-open .theme-swatch:nth-child(8){ transition-delay: 240ms; }
+.theme-options.is-open .theme-swatch:nth-child(9){ transition-delay: 270ms; }
+.theme-options.is-open .theme-swatch:nth-child(10){ transition-delay: 300ms; }
 .theme-swatch.is-active{ transform: scale(1.08); box-shadow: 0 0 0 2px var(--accent); }
 
 .todo-form{
@@ -975,5 +1071,5 @@ body{
 @media (max-width: 900px){
   .student-panel-grid{ grid-template-columns: 1fr; }
   .study-tools{ width: 100%; }
-  .theme-options{ grid-template-columns: 26px; border-radius: 14px; }
+  .theme-options{ grid-template-columns: repeat(2, 26px); border-radius: 14px; }
 }
