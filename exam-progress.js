@@ -246,6 +246,11 @@
 
     refresh();
     window.addEventListener('storage', refresh);
+    window.addEventListener('focus', refresh);
+    window.addEventListener('pageshow', refresh);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') refresh();
+    });
   }
 
   function extractSubjectPathsFromDocument(doc, baseUrl) {
