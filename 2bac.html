@@ -23,8 +23,8 @@
     </div>
 
     <div class="theme-menu" aria-label="Choix du thème">
-      <button type="button" id="theme-toggle" class="theme-toggle" aria-expanded="false" aria-controls="theme-options">Theme</button>
-      <div id="theme-options" class="theme-options" hidden>
+      <button type="button" id="theme-toggle" class="theme-toggle" aria-expanded="false" aria-controls="theme-options">Thèmes</button>
+      <div id="theme-options" class="theme-options" aria-hidden="true">
         <button type="button" class="theme-swatch" data-theme="theme-bleu" aria-label="Thème Bleu"></button>
         <button type="button" class="theme-swatch" data-theme="theme-violet" aria-label="Thème Violet"></button>
         <button type="button" class="theme-swatch" data-theme="theme-clair" aria-label="Thème Clair"></button>
@@ -35,9 +35,9 @@
 
     <section class="student-panel-grid" aria-label="Student tools">
       <article class="glass-card todo-card">
-        <h2>Today’s Study Plan</h2>
+        <h2>To do</h2>
         <form id="todo-form" class="todo-form" autocomplete="off">
-          <input id="todo-input" type="text" maxlength="120" placeholder="Ajouter une tâche (ex: 1 sujet physique + correction)">
+          <input id="todo-input" type="text" maxlength="120" placeholder="Faire 3 examens">
           <button class="button" type="submit">Ajouter</button>
         </form>
         <ul id="todo-list" class="todo-list" aria-live="polite"></ul>

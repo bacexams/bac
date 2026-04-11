@@ -835,7 +835,7 @@ body{
 }
 
 .student-panel-grid{
-  margin: 14px auto 8px;
+  margin: 14px auto 0;
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
@@ -855,10 +855,6 @@ body{
   margin: 0 0 8px;
   font-size: 1.15rem;
   text-align: center;
-}
-
-.todo-card{
-  min-height: 260px;
 }
 
 .theme-menu{
@@ -881,12 +877,26 @@ body{
 .theme-options{
   margin-top: 8px;
   display: grid;
-  grid-template-columns: repeat(5, 26px);
+  grid-template-columns: 26px;
   gap: 8px;
   padding: 8px;
-  border-radius: 999px;
+  border-radius: 14px;
   border: 1px solid var(--border);
   background: var(--surface-strong);
+  transform-origin: top;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: max-height 280ms ease, opacity 220ms ease, transform 280ms ease;
+}
+
+.theme-options.is-open{
+  max-height: 220px;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 .theme-swatch{
@@ -895,6 +905,14 @@ body{
   border-radius: 50%;
   border: 2px solid rgba(255,255,255,0.5);
   cursor: pointer;
+  transform: translateY(-6px);
+  opacity: 0;
+  transition: transform 240ms ease, opacity 200ms ease;
+}
+
+.theme-options.is-open .theme-swatch{
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .theme-swatch[data-theme="theme-bleu"]{ background: #7cb6ff; }
@@ -902,6 +920,11 @@ body{
 .theme-swatch[data-theme="theme-clair"]{ background: #e6efff; }
 .theme-swatch[data-theme="theme-vert"]{ background: #7bf0bf; }
 .theme-swatch[data-theme="theme-rose"]{ background: #ff9bd0; }
+.theme-options.is-open .theme-swatch:nth-child(1){ transition-delay: 40ms; }
+.theme-options.is-open .theme-swatch:nth-child(2){ transition-delay: 80ms; }
+.theme-options.is-open .theme-swatch:nth-child(3){ transition-delay: 120ms; }
+.theme-options.is-open .theme-swatch:nth-child(4){ transition-delay: 160ms; }
+.theme-options.is-open .theme-swatch:nth-child(5){ transition-delay: 200ms; }
 .theme-swatch.is-active{ transform: scale(1.08); box-shadow: 0 0 0 2px var(--accent); }
 
 .todo-form{
@@ -952,5 +975,5 @@ body{
 @media (max-width: 900px){
   .student-panel-grid{ grid-template-columns: 1fr; }
   .study-tools{ width: 100%; }
-  .theme-options{ grid-template-columns: repeat(3, 26px); border-radius: 14px; }
+  .theme-options{ grid-template-columns: 26px; border-radius: 14px; }
 }
