@@ -12,6 +12,9 @@
 --muted: rgba(255,255,255,0.62);
 
 --accent: #7cb6ff;
+--title-line-start: rgba(124,182,255,0.2);
+--title-line-mid: rgba(124,182,255,0.95);
+--title-line-end: rgba(120,255,212,0.7);
 
 --shadow: 0 14px 34px rgba(0,0,0,0.38);
 --radius: 18px;
@@ -146,7 +149,7 @@ width: 82px;
 height: 3px;
 border-radius: 999px;
 transform: translateX(-50%);
-background: linear-gradient(90deg, rgba(124,182,255,0.2), rgba(124,182,255,0.95), rgba(120,255,212,0.7));
+background: linear-gradient(90deg, var(--title-line-start), var(--title-line-mid), var(--title-line-end));
 
 }
 
@@ -212,7 +215,7 @@ width: 82px;
 height: 3px;
 border-radius: 999px;
 transform: translateX(-50%);
-background: linear-gradient(90deg, rgba(124,182,255,0.2), rgba(124,182,255,0.95), rgba(120,255,212,0.7));
+background: linear-gradient(90deg, var(--title-line-start), var(--title-line-mid), var(--title-line-end));
 }
 
 
@@ -806,6 +809,9 @@ body{
   --surface-strong: rgba(140,115,255,0.14);
   --border: rgba(195,175,255,0.28);
   --accent: #b89aff;
+  --title-line-start: rgba(184,154,255,0.25);
+  --title-line-mid: rgba(184,154,255,0.98);
+  --title-line-end: rgba(233,180,255,0.82);
 }
 
 .theme-clair{
@@ -816,6 +822,9 @@ body{
   --text: #13263f;
   --muted: #4f6077;
   --accent: #5d8bff;
+  --title-line-start: rgba(93,139,255,0.25);
+  --title-line-mid: rgba(93,139,255,0.95);
+  --title-line-end: rgba(137,179,255,0.8);
 }
 
 .theme-vert{
@@ -824,6 +833,9 @@ body{
   --surface-strong: rgba(66,164,128,0.2);
   --border: rgba(102,210,166,0.34);
   --accent: #7bf0bf;
+  --title-line-start: rgba(123,240,191,0.22);
+  --title-line-mid: rgba(123,240,191,0.98);
+  --title-line-end: rgba(156,255,224,0.86);
 }
 
 .theme-rose{
@@ -832,6 +844,9 @@ body{
   --surface-strong: rgba(206,110,160,0.2);
   --border: rgba(246,162,204,0.34);
   --accent: #ff9bd0;
+  --title-line-start: rgba(255,155,208,0.24);
+  --title-line-mid: rgba(255,155,208,0.98);
+  --title-line-end: rgba(255,198,224,0.84);
 }
 
 .theme-orange{
@@ -840,6 +855,9 @@ body{
   --surface-strong: rgba(255,164,82,0.18);
   --border: rgba(255,190,130,0.35);
   --accent: #ffb066;
+  --title-line-start: rgba(255,176,102,0.25);
+  --title-line-mid: rgba(255,176,102,0.98);
+  --title-line-end: rgba(255,217,150,0.84);
 }
 
 .theme-rouge{
@@ -848,16 +866,22 @@ body{
   --surface-strong: rgba(224,86,98,0.2);
   --border: rgba(255,149,164,0.33);
   --accent: #ff7c8f;
+  --title-line-start: rgba(255,124,143,0.24);
+  --title-line-mid: rgba(255,124,143,0.97);
+  --title-line-end: rgba(255,173,173,0.86);
 }
 
 .theme-ciel{
-  --bg-bottom: #dff4ff;
-  --surface: rgba(255,255,255,0.72);
-  --surface-strong: rgba(255,255,255,0.9);
-  --border: rgba(35,87,114,0.2);
-  --text: #0d2b3f;
-  --muted: #3f6279;
-  --accent: #4fc3f7;
+  --bg-bottom: #b8ecff;
+  --surface: rgba(223,246,255,0.62);
+  --surface-strong: rgba(198,237,255,0.8);
+  --border: rgba(30,93,126,0.24);
+  --text: #0b2940;
+  --muted: #295772;
+  --accent: #14b8ff;
+  --title-line-start: rgba(20,184,255,0.24);
+  --title-line-mid: rgba(20,184,255,0.94);
+  --title-line-end: rgba(98,255,247,0.84);
 }
 
 .theme-noir{
@@ -866,6 +890,9 @@ body{
   --surface-strong: rgba(255,255,255,0.08);
   --border: rgba(255,255,255,0.15);
   --accent: #b5bcc8;
+  --title-line-start: rgba(181,188,200,0.24);
+  --title-line-mid: rgba(181,188,200,0.94);
+  --title-line-end: rgba(226,232,240,0.72);
 }
 
 .theme-gold{
@@ -874,6 +901,53 @@ body{
   --surface-strong: rgba(228,190,90,0.2);
   --border: rgba(244,216,141,0.34);
   --accent: #f2c94c;
+  --title-line-start: rgba(242,201,76,0.26);
+  --title-line-mid: rgba(242,201,76,0.95);
+  --title-line-end: rgba(255,235,164,0.88);
+}
+
+.theme-ocean{
+  --bg-bottom: #031a27;
+  --surface: rgba(29,118,157,0.14);
+  --surface-strong: rgba(33,132,175,0.2);
+  --border: rgba(104,207,255,0.33);
+  --accent: #5ad6ff;
+  --title-line-start: rgba(90,214,255,0.24);
+  --title-line-mid: rgba(90,214,255,0.98);
+  --title-line-end: rgba(98,255,209,0.82);
+}
+
+.theme-lavande{
+  --bg-bottom: #1d1530;
+  --surface: rgba(173,132,255,0.12);
+  --surface-strong: rgba(173,132,255,0.2);
+  --border: rgba(218,188,255,0.33);
+  --accent: #c7a1ff;
+  --title-line-start: rgba(199,161,255,0.25);
+  --title-line-mid: rgba(199,161,255,0.97);
+  --title-line-end: rgba(255,192,242,0.83);
+}
+
+.theme-forest{
+  --bg-bottom: #08120b;
+  --surface: rgba(78,136,80,0.14);
+  --surface-strong: rgba(90,156,93,0.22);
+  --border: rgba(150,221,161,0.3);
+  --accent: #8fdf9c;
+  --title-line-start: rgba(143,223,156,0.22);
+  --title-line-mid: rgba(143,223,156,0.96);
+  --title-line-end: rgba(199,255,177,0.85);
+}
+
+.theme-sunset{
+  --bg-bottom: #2f130a;
+  --surface: rgba(255,123,84,0.13);
+  --surface-strong: rgba(255,141,98,0.21);
+  --border: rgba(255,196,137,0.34);
+  --accent: #ff9564;
+  --title-line-start: rgba(255,149,100,0.24);
+  --title-line-mid: rgba(255,149,100,0.97);
+  --title-line-end: rgba(255,214,126,0.88);
 }
 
 .theme-clair .main-title,
@@ -1011,6 +1085,10 @@ body{
 .theme-swatch[data-theme="theme-ciel"]{ background: #7fdcff; }
 .theme-swatch[data-theme="theme-noir"]{ background: #171717; }
 .theme-swatch[data-theme="theme-gold"]{ background: #f2c94c; }
+.theme-swatch[data-theme="theme-ocean"]{ background: #5ad6ff; }
+.theme-swatch[data-theme="theme-lavande"]{ background: #c7a1ff; }
+.theme-swatch[data-theme="theme-forest"]{ background: #8fdf9c; }
+.theme-swatch[data-theme="theme-sunset"]{ background: #ff9564; }
 .theme-options.is-open .theme-swatch:nth-child(1){ transition-delay: 30ms; }
 .theme-options.is-open .theme-swatch:nth-child(2){ transition-delay: 60ms; }
 .theme-options.is-open .theme-swatch:nth-child(3){ transition-delay: 90ms; }
@@ -1021,6 +1099,10 @@ body{
 .theme-options.is-open .theme-swatch:nth-child(8){ transition-delay: 240ms; }
 .theme-options.is-open .theme-swatch:nth-child(9){ transition-delay: 270ms; }
 .theme-options.is-open .theme-swatch:nth-child(10){ transition-delay: 300ms; }
+.theme-options.is-open .theme-swatch:nth-child(11){ transition-delay: 330ms; }
+.theme-options.is-open .theme-swatch:nth-child(12){ transition-delay: 360ms; }
+.theme-options.is-open .theme-swatch:nth-child(13){ transition-delay: 390ms; }
+.theme-options.is-open .theme-swatch:nth-child(14){ transition-delay: 420ms; }
 .theme-swatch.is-active{ transform: scale(1.08); box-shadow: 0 0 0 2px var(--accent); }
 
 .todo-form{

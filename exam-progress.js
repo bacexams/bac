@@ -1,7 +1,7 @@
 (function () {
   const STORAGE_KEY = 'bac.examProgress.v1';
   const THEME_KEY = 'bac.theme.choice';
-  const THEMES = ['theme-bleu', 'theme-violet', 'theme-clair', 'theme-vert', 'theme-rose', 'theme-orange', 'theme-rouge', 'theme-ciel', 'theme-noir', 'theme-gold'];
+  const THEMES = ['theme-bleu', 'theme-violet', 'theme-clair', 'theme-vert', 'theme-rose', 'theme-orange', 'theme-rouge', 'theme-ciel', 'theme-noir', 'theme-gold', 'theme-ocean', 'theme-lavande', 'theme-forest', 'theme-sunset'];
   const DEFAULT_THEME = 'theme-bleu';
 
   function normalizePdfPath(path) {
