@@ -329,6 +329,8 @@ background: rgba(255,255,255,0.10);
   display: flex;
   flex-direction: column;
   min-width: 0;
+  text-align: center;
+  flex: 1;
 }
 
 #pdf-title{
@@ -797,8 +799,8 @@ body{
   transition: background 300ms ease, color 220ms ease;
 }
 
-.theme-ocean{}
-.theme-focus{
+.theme-bleu{}
+.theme-violet{
   --bg-bottom: #130f22;
   --surface: rgba(150,120,255,0.10);
   --surface-strong: rgba(140,115,255,0.14);
@@ -806,7 +808,7 @@ body{
   --accent: #b89aff;
 }
 
-.theme-paper{
+.theme-clair{
   --bg-bottom: #eef3ff;
   --surface: rgba(255,255,255,0.74);
   --surface-strong: rgba(255,255,255,0.92);
@@ -814,6 +816,22 @@ body{
   --text: #13263f;
   --muted: #4f6077;
   --accent: #5d8bff;
+}
+
+.theme-vert{
+  --bg-bottom: #081a16;
+  --surface: rgba(59,146,114,0.14);
+  --surface-strong: rgba(66,164,128,0.2);
+  --border: rgba(102,210,166,0.34);
+  --accent: #7bf0bf;
+}
+
+.theme-rose{
+  --bg-bottom: #22101c;
+  --surface: rgba(194,93,145,0.13);
+  --surface-strong: rgba(206,110,160,0.2);
+  --border: rgba(246,162,204,0.34);
+  --accent: #ff9bd0;
 }
 
 .student-panel-grid{
@@ -835,6 +853,7 @@ body{
 .glass-card h3{
   margin: 0 0 4px;
   font-size: 1.05rem;
+  text-align: center;
 }
 
 .theme-picker,
@@ -843,6 +862,28 @@ body{
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 10px;
+  justify-content: center;
+}
+
+.theme-select-label{
+  display: block;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.theme-select{
+  width: min(280px, 100%);
+  margin: 0 auto;
+  display: block;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-strong);
+  color: var(--text);
+  padding: 10px 12px;
+  font: inherit;
+  font-weight: 700;
 }
 
 .theme-chip{
@@ -863,6 +904,7 @@ body{
   grid-template-columns: 1fr auto;
   gap: 8px;
   margin-top: 10px;
+  align-items: center;
 }
 
 .todo-form input,
@@ -876,19 +918,19 @@ body{
   font: inherit;
 }
 
-.todo-list{ list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 8px; }
+.todo-list{ list-style: none; padding: 0; margin: 10px auto 0; display: grid; gap: 8px; max-width: 540px; width: 100%; }
 .todo-item{ display: grid; grid-template-columns: 28px 1fr 26px; align-items: center; gap: 8px; padding: 8px; border-radius: 12px; background: rgba(0,0,0,0.12); }
 .todo-check{ width: 22px;height: 22px;border-radius: 50%;border:1px solid var(--border);background: transparent;cursor:pointer; }
 .todo-check.is-done{ background: linear-gradient(135deg, #2db17b, #1e805a); border-color: #5fd6a1; }
 .todo-text.is-done{ text-decoration: line-through; opacity: .72; }
 .todo-delete{ border:0;background: transparent;color: var(--muted);font-size:1rem;cursor:pointer; }
 
-.study-tools{ width: min(320px, 100%); display: grid; gap: 12px; }
+.study-tools{ width: min(320px, 100%); display: grid; gap: 12px; align-self: stretch; }
 .glass-card.compact{ padding: 12px; }
 #focus-audio{ width: 100%; margin-top: 10px; }
-.timer-form{ display: grid; gap: 8px; }
+.timer-form{ display: grid; gap: 8px; text-align: center; }
 .timer-actions{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.timer-display{ margin-top: 10px; text-align: center; font-size: 2rem; font-weight: 800; letter-spacing: 1px; }
+.timer-display{ margin-top: 10px; text-align: center; font-size: 2rem; font-weight: 800; letter-spacing: 1px; width: 100%; }
 .timer-display.is-finished{ animation: pulse 500ms ease 3; }
 
 @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)} }
