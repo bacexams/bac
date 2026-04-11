@@ -1,7 +1,7 @@
 (function () {
   const STORAGE_KEY = 'bac.examProgress.v1';
   const THEME_KEY = 'bac.theme.choice';
-  const THEMES = ['theme-bleu', 'theme-clair', 'theme-vert', 'theme-rose', 'theme-orange', 'theme-rouge', 'theme-ciel', 'theme-noir', 'theme-gold', 'theme-ocean', 'theme-lavande', 'theme-forest', 'theme-sunset'];
+  const THEMES = ['theme-bleu', 'theme-clair', 'theme-vert', 'theme-rose', 'theme-rouge', 'theme-ciel', 'theme-noir', 'theme-gold', 'theme-ocean', 'theme-lavande', 'theme-forest', 'theme-sunset', 'theme-aurora', 'theme-mint', 'theme-grape'];
   const DEFAULT_THEME = 'theme-bleu';
 
   function normalizePdfPath(path) {
@@ -99,6 +99,44 @@
     return nextTheme;
   }
 
+  function readThemeChoice() {
+    try {
+      const stored = localStorage.getItem(THEME_KEY);
+      if (stored) return stored;
+    }
+    catch {
+      // Fallback to cookie if localStorage is unavailable.
+    }
+
+    try {
+      const cookieValue = document.cookie
+        .split(';')
+        .map((part) => part.trim())
+        .find((part) => part.startsWith(`${THEME_KEY}=`));
+      if (!cookieValue) return '';
+      return decodeURIComponent(cookieValue.slice(THEME_KEY.length + 1));
+    }
+    catch {
+      return '';
+    }
+  }
+
+  function writeThemeChoice(themeName) {
+    try {
+      localStorage.setItem(THEME_KEY, themeName);
+    }
+    catch {
+      // Keep going, cookie fallback below will persist the theme.
+    }
+
+    try {
+      document.cookie = `${THEME_KEY}=${encodeURIComponent(themeName)}; path=/; max-age=31536000; SameSite=Lax`;
+    }
+    catch {
+      // Ignore if cookies are disabled.
+    }
+  }
+
 
 
   function ensureThemeMenu() {
@@ -114,7 +152,6 @@
         <button type="button" class="theme-swatch" data-theme="theme-clair" aria-label="Thème Clair"></button>
         <button type="button" class="theme-swatch" data-theme="theme-vert" aria-label="Thème Vert"></button>
         <button type="button" class="theme-swatch" data-theme="theme-rose" aria-label="Thème Rose vif"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-orange" aria-label="Thème Orange"></button>
         <button type="button" class="theme-swatch" data-theme="theme-rouge" aria-label="Thème Rouge"></button>
         <button type="button" class="theme-swatch" data-theme="theme-ciel" aria-label="Thème Bleu clair"></button>
         <button type="button" class="theme-swatch" data-theme="theme-noir" aria-label="Thème Noir"></button>
@@ -123,6 +160,9 @@
         <button type="button" class="theme-swatch" data-theme="theme-lavande" aria-label="Thème Lavande"></button>
         <button type="button" class="theme-swatch" data-theme="theme-forest" aria-label="Thème Forêt"></button>
         <button type="button" class="theme-swatch" data-theme="theme-sunset" aria-label="Thème Sunset"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-aurora" aria-label="Thème Aurora"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-mint" aria-label="Thème Mint"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-grape" aria-label="Thème Grape"></button>
       </div>
     `;
 
@@ -130,7 +170,7 @@
   }
 
   function initGlobalTheme() {
-    const savedTheme = localStorage.getItem(THEME_KEY) || DEFAULT_THEME;
+    const savedTheme = readThemeChoice() || DEFAULT_THEME;
 
     const swatches = Array.from(document.querySelectorAll('.theme-swatch[data-theme]'));
     const toggle = document.getElementById('theme-toggle');
@@ -147,7 +187,7 @@
     function setTheme(themeName, persist = true) {
       const next = applyTheme(themeName);
       syncThemeControls(next);
-      if (persist) localStorage.setItem(THEME_KEY, next);
+      if (persist) writeThemeChoice(next);
       return next;
     }
 
