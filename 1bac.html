@@ -25,12 +25,14 @@
     <section class="student-panel-grid" aria-label="Student tools">
       <article class="glass-card">
         <h2>Thème</h2>
-        <p>Choisis l’ambiance qui te motive le plus.</p>
-        <div class="theme-picker" id="theme-picker">
-          <button class="theme-chip is-active" data-theme="theme-ocean" type="button">Ocean Blue</button>
-          <button class="theme-chip" data-theme="theme-focus" type="button">Focus Violet</button>
-          <button class="theme-chip" data-theme="theme-paper" type="button">Paper Light</button>
-        </div>
+        <label class="theme-select-label" for="theme-select">Couleur</label>
+        <select id="theme-select" class="theme-select" aria-label="Choisir une couleur de thème">
+          <option value="theme-bleu">Bleu</option>
+          <option value="theme-violet">Violet</option>
+          <option value="theme-clair">Clair</option>
+          <option value="theme-vert">Vert</option>
+          <option value="theme-rose">Rose</option>
+        </select>
       </article>
 
       <article class="glass-card">
@@ -78,29 +80,6 @@
       elHours.textContent = Math.floor((totalSeconds % 86400) / 3600);
       elMins.textContent = Math.floor((totalSeconds % 3600) / 60);
       elSecs.textContent = totalSeconds % 60;
-    }
-
-    function initThemePicker() {
-      const storageKey = 'bac.theme.choice';
-      const body = document.body;
-      const chips = Array.from(document.querySelectorAll('.theme-chip'));
-      const savedTheme = localStorage.getItem(storageKey) || 'theme-ocean';
-      body.classList.add(savedTheme);
-
-      function sync(theme) {
-        chips.forEach((chip) => chip.classList.toggle('is-active', chip.dataset.theme === theme));
-      }
-
-      sync(savedTheme);
-      chips.forEach((chip) => {
-        chip.addEventListener('click', () => {
-          const theme = chip.dataset.theme;
-          body.classList.remove('theme-ocean', 'theme-focus', 'theme-paper');
-          body.classList.add(theme);
-          localStorage.setItem(storageKey, theme);
-          sync(theme);
-        });
-      });
     }
 
     function initTodoList() {
@@ -158,9 +137,8 @@
 
     updateCountdown();
     setInterval(updateCountdown, 1000);
-    initThemePicker();
     initTodoList();
   </script>
-  <script src="exam-progress.js" defer></script>
+  <script src="/exam-progress.js" defer></script>
 </body>
 </html>

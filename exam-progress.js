@@ -1,5 +1,8 @@
 (function () {
   const STORAGE_KEY = 'bac.examProgress.v1';
+  const THEME_KEY = 'bac.theme.choice';
+  const THEMES = ['theme-bleu', 'theme-violet', 'theme-clair', 'theme-vert', 'theme-rose'];
+  const DEFAULT_THEME = 'theme-bleu';
 
   function normalizePdfPath(path) {
     if (!path) return '';
@@ -87,6 +90,34 @@
 
     const percentage = total ? Math.round((doneCount / total) * 100) : 0;
     return { doneCount, total, percentage };
+  }
+
+  function applyTheme(themeName) {
+    const nextTheme = THEMES.includes(themeName) ? themeName : DEFAULT_THEME;
+    document.body.classList.remove(...THEMES);
+    document.body.classList.add(nextTheme);
+    return nextTheme;
+  }
+
+  function initGlobalTheme() {
+    const savedTheme = localStorage.getItem(THEME_KEY) || DEFAULT_THEME;
+    const activeTheme = applyTheme(savedTheme);
+    const select = document.getElementById('theme-select');
+
+    if (select) {
+      select.value = activeTheme;
+      select.addEventListener('change', () => {
+        const next = applyTheme(select.value);
+        localStorage.setItem(THEME_KEY, next);
+      });
+    }
+
+    window.addEventListener('storage', (event) => {
+      if (event.key === THEME_KEY) {
+        const syncedTheme = applyTheme(event.newValue || DEFAULT_THEME);
+        if (select) select.value = syncedTheme;
+      }
+    });
   }
 
   function enhanceExamListPage() {
@@ -274,6 +305,7 @@
     window.addEventListener('storage', refresh);
   }
 
+  initGlobalTheme();
   enhanceExamListPage();
   enhanceSessionProgressLinks();
   enhancePdfViewerPage();

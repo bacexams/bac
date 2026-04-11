@@ -10,11 +10,6 @@
   <link rel="stylesheet" href="appearance.css">
 </head>
 <body data-page="2bac">
-  <section class="intro-panel">
-    <h2 class="intro-title">Prépare ton <span class="intro-highlight">Examen National 2026</span> avec confiance</h2>
-    <p>As-tu déjà cherché des examens nationaux en ligne et trouvé des sujets incomplets ou sans correction ? Ici, tu trouveras des centaines d'examens nationaux, classés par filière, avec leurs corrections et une navigation claire.</p>
-  </section>
-
   <div class="wrap">
     <div class="main">
       <h1 class="main-title">Examen National 2026</h1>
@@ -30,12 +25,14 @@
     <section class="student-panel-grid" aria-label="Student tools">
       <article class="glass-card">
         <h2>Thème</h2>
-        <p>Bascule rapidement vers l’ambiance qui t’aide à rester concentré.</p>
-        <div class="theme-picker" id="theme-picker">
-          <button class="theme-chip is-active" data-theme="theme-ocean" type="button">Ocean Blue</button>
-          <button class="theme-chip" data-theme="theme-focus" type="button">Focus Violet</button>
-          <button class="theme-chip" data-theme="theme-paper" type="button">Paper Light</button>
-        </div>
+        <label class="theme-select-label" for="theme-select">Couleur</label>
+        <select id="theme-select" class="theme-select" aria-label="Choisir une couleur de thème">
+          <option value="theme-bleu">Bleu</option>
+          <option value="theme-violet">Violet</option>
+          <option value="theme-clair">Clair</option>
+          <option value="theme-vert">Vert</option>
+          <option value="theme-rose">Rose</option>
+        </select>
       </article>
 
       <article class="glass-card">
@@ -91,29 +88,6 @@
       elSecs.textContent = totalSeconds % 60;
     }
 
-    function initThemePicker() {
-      const storageKey = 'bac.theme.choice';
-      const body = document.body;
-      const chips = Array.from(document.querySelectorAll('.theme-chip'));
-      const savedTheme = localStorage.getItem(storageKey) || 'theme-ocean';
-      body.classList.add(savedTheme);
-
-      function sync(theme) {
-        chips.forEach((chip) => chip.classList.toggle('is-active', chip.dataset.theme === theme));
-      }
-
-      sync(savedTheme);
-      chips.forEach((chip) => {
-        chip.addEventListener('click', () => {
-          const theme = chip.dataset.theme;
-          body.classList.remove('theme-ocean', 'theme-focus', 'theme-paper');
-          body.classList.add(theme);
-          localStorage.setItem(storageKey, theme);
-          sync(theme);
-        });
-      });
-    }
-
     function initTodoList() {
       const key = 'bac.todo.2bac';
       const form = document.getElementById('todo-form');
@@ -166,9 +140,8 @@
 
     updateCountdown();
     setInterval(updateCountdown, 1000);
-    initThemePicker();
     initTodoList();
   </script>
-  <script src="exam-progress.js" defer></script>
+  <script src="/exam-progress.js" defer></script>
 </body>
 </html>
