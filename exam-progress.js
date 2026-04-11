@@ -1,7 +1,7 @@
 (function () {
   const STORAGE_KEY = 'bac.examProgress.v1';
   const THEME_KEY = 'bac.theme.choice';
-  const THEMES = ['theme-bleu', 'theme-violet', 'theme-clair', 'theme-vert', 'theme-rose', 'theme-orange', 'theme-rouge', 'theme-ciel', 'theme-noir', 'theme-gold', 'theme-ocean', 'theme-lavande', 'theme-forest', 'theme-sunset'];
+  const THEMES = ['theme-bleu', 'theme-clair', 'theme-vert', 'theme-rose', 'theme-orange', 'theme-rouge', 'theme-ciel', 'theme-noir', 'theme-gold', 'theme-ocean', 'theme-lavande', 'theme-forest', 'theme-sunset'];
   const DEFAULT_THEME = 'theme-bleu';
 
   function normalizePdfPath(path) {
@@ -97,6 +97,36 @@
     document.body.classList.remove(...THEMES);
     document.body.classList.add(nextTheme);
     return nextTheme;
+  }
+
+
+
+  function ensureThemeMenu() {
+    if (document.getElementById('theme-toggle') || !document.body) return;
+
+    const menu = document.createElement('div');
+    menu.className = 'theme-menu';
+    menu.setAttribute('aria-label', 'Choix du thème');
+    menu.innerHTML = `
+      <button type="button" id="theme-toggle" class="theme-toggle" aria-expanded="false" aria-controls="theme-options">Thèmes</button>
+      <div id="theme-options" class="theme-options" aria-hidden="true">
+        <button type="button" class="theme-swatch" data-theme="theme-bleu" aria-label="Thème Bleu"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-clair" aria-label="Thème Clair"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-vert" aria-label="Thème Vert"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-rose" aria-label="Thème Rose vif"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-orange" aria-label="Thème Orange"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-rouge" aria-label="Thème Rouge"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-ciel" aria-label="Thème Bleu clair"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-noir" aria-label="Thème Noir"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-gold" aria-label="Thème Doré"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-ocean" aria-label="Thème Océan"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-lavande" aria-label="Thème Lavande"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-forest" aria-label="Thème Forêt"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-sunset" aria-label="Thème Sunset"></button>
+      </div>
+    `;
+
+    document.body.prepend(menu);
   }
 
   function initGlobalTheme() {
@@ -358,6 +388,7 @@
     window.addEventListener('storage', refresh);
   }
 
+  ensureThemeMenu();
   initGlobalTheme();
   enhanceExamListPage();
   enhanceSessionProgressLinks();
