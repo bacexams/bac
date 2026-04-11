@@ -187,8 +187,8 @@
     const href = link.getAttribute('href');
     if (!href) return;
 
-    const looksLikeSessionLink = /(?:^|\/)normale\.html$|(?:^|\/)rattrapage\.html$|(?:^|\/)ratrapage\.html$/i.test(href) || /normale|rattrapage/i.test(link.textContent || '');
-    if (!looksLikeSessionLink) return;
+    const looksLikeTrackableLink = /\.html?(?:$|[?#])/i.test(href) && !/view-pdf\.html/i.test(href);
+    if (!looksLikeTrackableLink) return;
 
     let targetUrl;
     try {
@@ -211,6 +211,7 @@
 
       const badge = document.createElement('span');
       badge.className = 'session-progress-badge';
+      badge.style.setProperty('--progress', `${progress.percentage}%`);
       badge.textContent = `${progress.percentage}%`;
       badge.title = `${progress.doneCount}/${progress.total} terminés`;
 
