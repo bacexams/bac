@@ -173,7 +173,7 @@ background: var(--surface-strong);
 border: 1px solid var(--border);
 box-shadow: 0 12px 28px rgba(0,0,0,0.32);
 
-transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+transition: transform 220ms cubic-bezier(.2,.7,.2,1), border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
 position: relative;
 overflow: hidden;
 }
@@ -227,7 +227,7 @@ transform: translateX(120%);
 }
 
 .button:active{
-transform: translateY(0px);
+transform: translateY(1px) scale(0.995);
 }
 
 .button:focus-visible{
@@ -424,7 +424,7 @@ background: rgba(255,255,255,0.10);
   max-width: 1000px;
   margin: 18px auto;
   padding: 28px 26px;
-  border: 1px solid rgba(124,182,255,0.38)
+  border: 1px solid rgba(124,182,255,0.38);
   border-radius: 16px;
   background: rgba(20, 28, 40, 0.55);
   backdrop-filter: blur(8px);
@@ -790,4 +790,118 @@ width: 100%;
 .exam-link-done {
   opacity: 0.75;
   text-decoration: line-through;
+}
+
+
+body{
+  transition: background 300ms ease, color 220ms ease;
+}
+
+.theme-ocean{}
+.theme-focus{
+  --bg-bottom: #130f22;
+  --surface: rgba(150,120,255,0.10);
+  --surface-strong: rgba(140,115,255,0.14);
+  --border: rgba(195,175,255,0.28);
+  --accent: #b89aff;
+}
+
+.theme-paper{
+  --bg-bottom: #eef3ff;
+  --surface: rgba(255,255,255,0.74);
+  --surface-strong: rgba(255,255,255,0.92);
+  --border: rgba(31,52,84,0.14);
+  --text: #13263f;
+  --muted: #4f6077;
+  --accent: #5d8bff;
+}
+
+.student-panel-grid{
+  margin: 18px 0 8px;
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 12px;
+}
+
+.glass-card{
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 14px;
+  box-shadow: var(--shadow);
+}
+
+.glass-card h2,
+.glass-card h3{
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+}
+
+.theme-picker,
+.audio-preset-row{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.theme-chip{
+  border: 1px solid var(--border);
+  background: var(--surface-strong);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 180ms ease, background 200ms ease, border-color 200ms ease;
+}
+.theme-chip:hover{ transform: translateY(-1px); }
+.theme-chip.is-active{ border-color: var(--accent); box-shadow: 0 0 0 2px rgba(124,182,255,0.2) inset; }
+
+.todo-form{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.todo-form input,
+.timer-form input{
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.16);
+  color: var(--text);
+  padding: 11px;
+  font: inherit;
+}
+
+.todo-list{ list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 8px; }
+.todo-item{ display: grid; grid-template-columns: 28px 1fr 26px; align-items: center; gap: 8px; padding: 8px; border-radius: 12px; background: rgba(0,0,0,0.12); }
+.todo-check{ width: 22px;height: 22px;border-radius: 50%;border:1px solid var(--border);background: transparent;cursor:pointer; }
+.todo-check.is-done{ background: linear-gradient(135deg, #2db17b, #1e805a); border-color: #5fd6a1; }
+.todo-text.is-done{ text-decoration: line-through; opacity: .72; }
+.todo-delete{ border:0;background: transparent;color: var(--muted);font-size:1rem;cursor:pointer; }
+
+.study-tools{ width: min(320px, 100%); display: grid; gap: 12px; }
+.glass-card.compact{ padding: 12px; }
+#focus-audio{ width: 100%; margin-top: 10px; }
+.timer-form{ display: grid; gap: 8px; }
+.timer-actions{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.timer-display{ margin-top: 10px; text-align: center; font-size: 2rem; font-weight: 800; letter-spacing: 1px; }
+.timer-display.is-finished{ animation: pulse 500ms ease 3; }
+
+@keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)} }
+
+.session-progress-badge {
+  background:
+    radial-gradient(circle at center, #0f1b2a 62%, transparent 63%),
+    conic-gradient(#64dfb6 var(--progress, 0%), #23364f 0);
+  color: #e8f4ff;
+  border: none;
+  font-size: .62rem;
+}
+@media (max-width: 900px){
+  .student-panel-grid{ grid-template-columns: 1fr; }
+  .study-tools{ width: 100%; }
 }

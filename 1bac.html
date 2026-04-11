@@ -1,17 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<link rel="preconnect" href="https://fonts.googleapis.com">
- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Examen National 2026</title>
+  <title>Examen Regional 2026</title>
   <link rel="stylesheet" href="appearance.css">
 </head>
-
-<body>
+<body data-page="1bac">
   <div class="wrap">
     <div class="main">
       <h1 class="main-title">Examen Regional 2026</h1>
@@ -24,64 +22,145 @@
       </div>
     </div>
 
-    <div class="section-title">Examens Regionaux</div>
+    <section class="student-panel-grid" aria-label="Student tools">
+      <article class="glass-card">
+        <h2>Thème</h2>
+        <p>Choisis l’ambiance qui te motive le plus.</p>
+        <div class="theme-picker" id="theme-picker">
+          <button class="theme-chip is-active" data-theme="theme-ocean" type="button">Ocean Blue</button>
+          <button class="theme-chip" data-theme="theme-focus" type="button">Focus Violet</button>
+          <button class="theme-chip" data-theme="theme-paper" type="button">Paper Light</button>
+        </div>
+      </article>
 
+      <article class="glass-card">
+        <h2>Today’s Study Plan</h2>
+        <form id="todo-form" class="todo-form" autocomplete="off">
+          <input id="todo-input" type="text" maxlength="120" placeholder="Ajouter une tâche (ex: Réviser HG chapitre 2)">
+          <button class="button" type="submit">Ajouter</button>
+        </form>
+        <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
+      </article>
+    </section>
+
+    <div class="section-title">Examens Regionaux</div>
     <div class="grid">
       <a class="button" href="majors/1bac/francais/regions.html">Francais</a>
       <a class="button" href="majors/1bac/arabe/regions.html">Arabe</a>
       <a class="button" href="majors/1bac/hg/regions.html">HG</a>
       <a class="button" href="majors/1bac/ei/regions.html">EI</a>
     </div>
-   
+
     <div class="section-title">Cadres Référentiels</div>
     <div class="grid">
       <a class="button" href="view-pdf.html?pdf=EXAMS/cadre_1bac/cdrfr.pdf">Francais</a>
       <a class="button" href="view-pdf.html?pdf=EXAMS/cadre_1bac/cdrar.pdf">Arabe</a>
       <a class="button" href="view-pdf.html?pdf=EXAMS/cadre_1bac/cdrei.pdf">EI</a>
-      <a class="button" href="view-pdf.html?pdf=EXAMS/cadre_1bac/cdrhg.pdf">HG</a>      
+      <a class="button" href="view-pdf.html?pdf=EXAMS/cadre_1bac/cdrhg.pdf">HG</a>
     </div>
+  </div>
 
   <script>
-    const target = new Date("2026-06-01T08:00:00+01:00");
-
-    const elDays = document.getElementById("cd-days");
-    const elHours = document.getElementById("cd-hours");
-    const elMins = document.getElementById("cd-mins");
-    const elSecs = document.getElementById("cd-secs");
+    const target = new Date('2026-06-01T08:00:00+01:00');
+    const elDays = document.getElementById('cd-days');
+    const elHours = document.getElementById('cd-hours');
+    const elMins = document.getElementById('cd-mins');
+    const elSecs = document.getElementById('cd-secs');
 
     function updateCountdown() {
-      if (isNaN(target.getTime())) {
-        elDays.textContent = "ERR";
-        elHours.textContent = "ERR";
-        elMins.textContent = "ERR";
-        elSecs.textContent = "ERR";
-        return;
-      }
-
       const diff = target.getTime() - Date.now();
-
-      if (diff <= 0) {
-        elDays.textContent = "0";
-        elHours.textContent = "0";
-        elMins.textContent = "0";
-        elSecs.textContent = "0";
+      if (diff <= 0 || Number.isNaN(target.getTime())) {
+        [elDays, elHours, elMins, elSecs].forEach((el) => { el.textContent = '0'; });
         return;
       }
-
       const totalSeconds = Math.floor(diff / 1000);
-      const days = Math.floor(totalSeconds / 86400);
-      const hours = Math.floor((totalSeconds % 86400) / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
+      elDays.textContent = Math.floor(totalSeconds / 86400);
+      elHours.textContent = Math.floor((totalSeconds % 86400) / 3600);
+      elMins.textContent = Math.floor((totalSeconds % 3600) / 60);
+      elSecs.textContent = totalSeconds % 60;
+    }
 
-      elDays.textContent = days;
-      elHours.textContent = hours;
-      elMins.textContent = minutes;
-      elSecs.textContent = seconds;
+    function initThemePicker() {
+      const storageKey = 'bac.theme.choice';
+      const body = document.body;
+      const chips = Array.from(document.querySelectorAll('.theme-chip'));
+      const savedTheme = localStorage.getItem(storageKey) || 'theme-ocean';
+      body.classList.add(savedTheme);
+
+      function sync(theme) {
+        chips.forEach((chip) => chip.classList.toggle('is-active', chip.dataset.theme === theme));
+      }
+
+      sync(savedTheme);
+      chips.forEach((chip) => {
+        chip.addEventListener('click', () => {
+          const theme = chip.dataset.theme;
+          body.classList.remove('theme-ocean', 'theme-focus', 'theme-paper');
+          body.classList.add(theme);
+          localStorage.setItem(storageKey, theme);
+          sync(theme);
+        });
+      });
+    }
+
+    function initTodoList() {
+      const key = 'bac.todo.1bac';
+      const form = document.getElementById('todo-form');
+      const input = document.getElementById('todo-input');
+      const list = document.getElementById('todo-list');
+
+      function read() {
+        try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; }
+      }
+
+      function write(items) {
+        localStorage.setItem(key, JSON.stringify(items));
+      }
+
+      function render() {
+        const items = read();
+        list.innerHTML = '';
+        items.forEach((item) => {
+          const li = document.createElement('li');
+          li.className = 'todo-item';
+          li.innerHTML = `
+            <button class="todo-check ${item.done ? 'is-done' : ''}" type="button" aria-label="Terminer"></button>
+            <span class="todo-text ${item.done ? 'is-done' : ''}">${item.text}</span>
+            <button class="todo-delete" type="button" aria-label="Supprimer">✕</button>
+          `;
+
+          li.querySelector('.todo-check').addEventListener('click', () => {
+            item.done = !item.done;
+            write(items);
+            render();
+          });
+          li.querySelector('.todo-delete').addEventListener('click', () => {
+            write(items.filter((entry) => entry.id !== item.id));
+            render();
+          });
+          list.appendChild(li);
+        });
+      }
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        const items = read();
+        items.unshift({ id: crypto.randomUUID(), text, done: false });
+        write(items.slice(0, 8));
+        input.value = '';
+        render();
+      });
+
+      render();
     }
 
     updateCountdown();
     setInterval(updateCountdown, 1000);
+    initThemePicker();
+    initTodoList();
   </script>
+  <script src="exam-progress.js" defer></script>
 </body>
 </html>

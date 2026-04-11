@@ -27,6 +27,30 @@
         <div id="pdf-container" class="pdf-container" aria-live="polite"></div>
       </section>
 
+      <aside class="study-tools" aria-label="Study tools">
+        <section class="glass-card compact">
+          <h3>Focus Audio</h3>
+          <div class="audio-preset-row">
+            <button class="theme-chip audio-preset is-active" data-src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1f15f2bfc4.mp3?filename=lofi-study-112191.mp3">Lofi</button>
+            <button class="theme-chip audio-preset" data-src="https://cdn.pixabay.com/download/audio/2022/08/04/audio_3ed66f8ac8.mp3?filename=rain-and-thunder-112522.mp3">Rain</button>
+            <button class="theme-chip audio-preset" data-src="https://cdn.pixabay.com/download/audio/2022/01/20/audio_7d84fb96ef.mp3?filename=white-noise-5234.mp3">White Noise</button>
+          </div>
+          <audio id="focus-audio" controls preload="none"></audio>
+        </section>
+
+        <section class="glass-card compact">
+          <h3>Exam Timer</h3>
+          <form id="timer-form" class="timer-form">
+            <label for="timer-minutes">Durée (minutes)</label>
+            <input id="timer-minutes" type="number" min="1" max="360" value="90">
+            <div class="timer-actions">
+              <button class="button" type="submit">Start</button>
+              <button id="timer-reset" class="button" type="button">Reset</button>
+            </div>
+          </form>
+          <div id="timer-display" class="timer-display">90:00</div>
+        </section>
+      </aside>
     </div>
 
     <script type="module">
@@ -38,11 +62,8 @@
       const rawPdfPath = urlParams.get('pdf') || '';
 
       const decodedPdfPath = (() => {
-        try {
-          return decodeURIComponent(rawPdfPath);
-        } catch {
-          return rawPdfPath;
-        }
+        try { return decodeURIComponent(rawPdfPath); }
+        catch { return rawPdfPath; }
       })();
 
       const titleEl = document.getElementById('pdf-title');
@@ -132,7 +153,7 @@
 
         const maxWidth = containerEl.clientWidth - 24;
         const fitScale = maxWidth / viewport.width;
-        const finalScale = Math.min(zoomLevel, zoomLevel * fitScale < zoomLevel ? zoomLevel * fitScale : zoomLevel);
+        const finalScale = fitScale < 1 ? zoomLevel * fitScale : zoomLevel;
         const finalViewport = page.getViewport({ scale: finalScale });
 
         const dpr = Math.max(window.devicePixelRatio || 1, 1);
@@ -168,11 +189,70 @@
       zoomInBtn.addEventListener('click', () => rerenderWithZoom(zoomLevel + 0.1));
       zoomResetBtn.addEventListener('click', () => rerenderWithZoom(1.15));
 
+      let resizeTimer;
       window.addEventListener('resize', () => {
         if (!pdfDoc) return;
-        rerenderWithZoom(zoomLevel);
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => rerenderWithZoom(zoomLevel), 140);
       });
+
+      const audio = document.getElementById('focus-audio');
+      const presets = Array.from(document.querySelectorAll('.audio-preset'));
+      const defaultSource = presets[0]?.dataset.src || '';
+      if (defaultSource) {
+        audio.src = defaultSource;
+      }
+
+      presets.forEach((preset) => {
+        preset.addEventListener('click', () => {
+          const src = preset.dataset.src;
+          if (!src) return;
+          const shouldPlay = !audio.paused;
+          audio.src = src;
+          presets.forEach((entry) => entry.classList.toggle('is-active', entry === preset));
+          if (shouldPlay) audio.play().catch(() => {});
+        });
+      });
+
+      const timerDisplay = document.getElementById('timer-display');
+      const timerForm = document.getElementById('timer-form');
+      const timerInput = document.getElementById('timer-minutes');
+      const timerReset = document.getElementById('timer-reset');
+      let remainingSeconds = 90 * 60;
+      let timerId = null;
+
+      function renderTimer() {
+        const mins = Math.floor(remainingSeconds / 60);
+        const secs = remainingSeconds % 60;
+        timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      }
+
+      timerForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const nextMinutes = Math.max(1, Math.min(360, Number(timerInput.value) || 1));
+        remainingSeconds = nextMinutes * 60;
+        renderTimer();
+
+        clearInterval(timerId);
+        timerId = setInterval(() => {
+          remainingSeconds -= 1;
+          renderTimer();
+          if (remainingSeconds <= 0) {
+            clearInterval(timerId);
+            timerDisplay.classList.add('is-finished');
+            setTimeout(() => timerDisplay.classList.remove('is-finished'), 1800);
+          }
+        }, 1000);
+      });
+
+      timerReset.addEventListener('click', () => {
+        clearInterval(timerId);
+        remainingSeconds = (Math.max(1, Number(timerInput.value) || 90) * 60);
+        renderTimer();
+      });
+
+      renderTimer();
     </script>
     <script src="exam-progress.js" defer></script>
-</body>
+  </body>
 </html>
