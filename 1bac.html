@@ -77,6 +77,7 @@
       const list = document.getElementById('todo-list');
       const TO_COLLAPSE_AT = 6;
       let expanded = false;
+      let dragState = { draggedId: null, dropId: null, placeAfter: false };
 
       const toggleAll = document.createElement('button');
       toggleAll.type = 'button';
@@ -90,6 +91,18 @@
 
       function write(items) {
         localStorage.setItem(key, JSON.stringify(items));
+      }
+
+      function clearDropIndicators() {
+        list.querySelectorAll('.is-drop-before, .is-drop-after, .is-hovered').forEach((entry) => {
+          entry.classList.remove('is-drop-before', 'is-drop-after', 'is-hovered');
+        });
+      }
+
+      function resetDragState() {
+        dragState = { draggedId: null, dropId: null, placeAfter: false };
+        list.classList.remove('is-sorting');
+        clearDropIndicators();
       }
 
       function moveItem(items, draggedId, targetId, placeAfter) {
@@ -134,28 +147,53 @@
 
           li.addEventListener('dragstart', (event) => {
             li.classList.add('is-dragging');
+            list.classList.add('is-sorting');
+            dragState.draggedId = item.id;
             event.dataTransfer?.setData('text/plain', item.id);
             if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
+
+            const ghost = li.cloneNode(true);
+            ghost.classList.remove('is-dragging');
+            ghost.classList.remove('is-drop-before', 'is-drop-after');
+            ghost.classList.add('todo-drag-ghost');
+            ghost.style.width = `${li.offsetWidth}px`;
+            ghost.style.position = 'absolute';
+            ghost.style.top = '-9999px';
+            ghost.style.left = '-9999px';
+            document.body.appendChild(ghost);
+            event.dataTransfer?.setDragImage(ghost, 20, 20);
+            requestAnimationFrame(() => ghost.remove());
           });
 
           li.addEventListener('dragover', (event) => {
             event.preventDefault();
             if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+            if (dragState.draggedId === item.id) return;
+            const rect = li.getBoundingClientRect();
+            const placeAfter = event.clientY > rect.top + rect.height / 2;
+            dragState.dropId = item.id;
+            dragState.placeAfter = placeAfter;
+            clearDropIndicators();
+            li.classList.add(placeAfter ? 'is-drop-after' : 'is-drop-before');
+            li.classList.add('is-hovered');
           });
 
           li.addEventListener('drop', (event) => {
             event.preventDefault();
-            const draggedId = event.dataTransfer?.getData('text/plain');
-            const rect = li.getBoundingClientRect();
-            const placeAfter = event.clientY > rect.top + rect.height / 2;
-            if (moveItem(items, draggedId, item.id, placeAfter)) {
+            const draggedId = event.dataTransfer?.getData('text/plain') || dragState.draggedId;
+            const targetId = dragState.dropId || item.id;
+            const placeAfter = dragState.placeAfter;
+            if (moveItem(items, draggedId, targetId, placeAfter)) {
               write(items);
               render();
+            } else {
+              resetDragState();
             }
           });
 
           li.addEventListener('dragend', () => {
             li.classList.remove('is-dragging');
+            resetDragState();
           });
 
           list.appendChild(li);
@@ -174,6 +212,25 @@
       toggleAll.addEventListener('click', () => {
         expanded = !expanded;
         render();
+      });
+
+      list.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        if (!dragState.draggedId || !list.children.length) return;
+        const lastItem = list.lastElementChild;
+        if (!(lastItem instanceof HTMLElement)) return;
+        const rect = lastItem.getBoundingClientRect();
+        if (event.clientY >= rect.bottom - 12 && dragState.draggedId !== lastItem.dataset.id) {
+          dragState.dropId = lastItem.dataset.id;
+          dragState.placeAfter = true;
+          clearDropIndicators();
+          lastItem.classList.add('is-drop-after');
+          lastItem.classList.add('is-hovered');
+        }
+      });
+
+      list.addEventListener('dragleave', (event) => {
+        if (event.target === list) clearDropIndicators();
       });
 
       form.addEventListener('submit', (event) => {
