@@ -8,6 +8,19 @@
   </head>
 
   <body>
+    <div class="sound-menu" aria-label="Background noise controls">
+      <button
+        type="button"
+        id="sound-toggle"
+        class="sound-toggle"
+        aria-expanded="false"
+        aria-controls="sound-options"
+      >
+        🎧 Ambiance
+      </button>
+      <div id="sound-options" class="sound-options" aria-hidden="true"></div>
+    </div>
+
     <div class="exam-layout">
       <section class="pdf-reader" aria-label="PDF reader">
         <header class="pdf-toolbar">
@@ -246,5 +259,90 @@
       renderTimer();
     </script>
     <script src="/exam-progress.js" defer></script>
+    <script>
+      const soundToggle = document.getElementById('sound-toggle');
+      const soundOptions = document.getElementById('sound-options');
+
+      const soundTracks = [
+        { id: 'lofi', label: 'Lofi', file: 'audio/lofi1.mp3' },
+        { id: 'rain', label: 'Rain', file: 'audio/rain.mp3' },
+        { id: 'brown-noise', label: 'Brown Noise', file: 'audio/brown.mp3' },
+      ];
+
+      const audioPlayer = new Audio();
+      audioPlayer.loop = true;
+      audioPlayer.preload = 'none';
+
+      let activeTrackId = '';
+
+      function closeSoundMenu() {
+        soundOptions.classList.remove('is-open');
+        soundOptions.setAttribute('aria-hidden', 'true');
+        soundToggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function openSoundMenu() {
+        soundOptions.classList.add('is-open');
+        soundOptions.setAttribute('aria-hidden', 'false');
+        soundToggle.setAttribute('aria-expanded', 'true');
+      }
+
+      function syncActiveTrackUi() {
+        const soundButtons = Array.from(soundOptions.querySelectorAll('[data-track-id]'));
+        soundButtons.forEach((button) => {
+          const isActive = button.dataset.trackId === activeTrackId;
+          button.classList.toggle('is-active', isActive);
+          button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+      }
+
+      async function playTrack(track) {
+        if (!track) return;
+
+        if (activeTrackId === track.id && !audioPlayer.paused) {
+          audioPlayer.pause();
+          activeTrackId = '';
+          syncActiveTrackUi();
+          return;
+        }
+
+        try {
+          audioPlayer.src = track.file;
+          await audioPlayer.play();
+          activeTrackId = track.id;
+          syncActiveTrackUi();
+        } catch (error) {
+          console.error('Unable to start audio track:', error);
+        }
+      }
+
+      soundTracks.forEach((track) => {
+        const soundButton = document.createElement('button');
+        soundButton.type = 'button';
+        soundButton.className = 'sound-option';
+        soundButton.dataset.trackId = track.id;
+        soundButton.textContent = track.label;
+        soundButton.setAttribute('aria-pressed', 'false');
+
+        soundButton.addEventListener('click', async () => {
+          await playTrack(track);
+          closeSoundMenu();
+        });
+
+        soundOptions.appendChild(soundButton);
+      });
+
+      soundToggle.addEventListener('click', () => {
+        const isOpen = soundOptions.classList.contains('is-open');
+        if (isOpen) closeSoundMenu();
+        else openSoundMenu();
+      });
+
+      document.addEventListener('click', (event) => {
+        if (!soundOptions.contains(event.target) && event.target !== soundToggle) {
+          closeSoundMenu();
+        }
+      });
+    </script>
   </body>
 </html>
