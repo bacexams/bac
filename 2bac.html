@@ -98,6 +98,19 @@
         localStorage.setItem(key, JSON.stringify(items));
       }
 
+      function moveItem(items, draggedId, targetId, placeAfter) {
+        if (!draggedId || !targetId || draggedId === targetId) return false;
+        const fromIndex = items.findIndex((entry) => entry.id === draggedId);
+        const toIndex = items.findIndex((entry) => entry.id === targetId);
+        if (fromIndex === -1 || toIndex === -1) return false;
+        const [draggedItem] = items.splice(fromIndex, 1);
+        let insertIndex = toIndex;
+        if (fromIndex < toIndex) insertIndex -= 1;
+        if (placeAfter) insertIndex += 1;
+        items.splice(insertIndex, 0, draggedItem);
+        return true;
+      }
+
       function render() {
         const items = read();
         const visibleItems = expanded ? items : items.slice(0, TO_COLLAPSE_AT);
@@ -106,6 +119,8 @@
         visibleItems.forEach((item) => {
           const li = document.createElement('li');
           li.className = 'todo-item';
+          li.draggable = true;
+          li.dataset.id = item.id;
           li.innerHTML = `
             <button class="todo-check ${item.done ? 'is-done' : ''}" type="button" aria-label="Terminer"></button>
             <span class="todo-text ${item.done ? 'is-done' : ''}">${item.text}</span>
@@ -122,13 +137,40 @@
             write(items.filter((entry) => entry.id !== item.id));
             render();
           });
+
+          li.addEventListener('dragstart', (event) => {
+            li.classList.add('is-dragging');
+            event.dataTransfer?.setData('text/plain', item.id);
+            if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
+          });
+
+          li.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+          });
+
+          li.addEventListener('drop', (event) => {
+            event.preventDefault();
+            const draggedId = event.dataTransfer?.getData('text/plain');
+            const rect = li.getBoundingClientRect();
+            const placeAfter = event.clientY > rect.top + rect.height / 2;
+            if (moveItem(items, draggedId, item.id, placeAfter)) {
+              write(items);
+              render();
+            }
+          });
+
+          li.addEventListener('dragend', () => {
+            li.classList.remove('is-dragging');
+          });
+
           list.appendChild(li);
         });
 
         const hiddenCount = items.length - TO_COLLAPSE_AT;
         if (hiddenCount > 0) {
           toggleAll.hidden = false;
-          toggleAll.textContent = expanded ? 'Afficher moins' : `Voir toutes les tâches (${hiddenCount})`;
+          toggleAll.textContent = expanded ? 'Afficher moins' : 'Afficher tout';
         } else {
           toggleAll.hidden = true;
           expanded = false;
