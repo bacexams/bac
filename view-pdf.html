@@ -31,9 +31,9 @@
         <section class="glass-card compact">
           <h3>Music</h3>
           <div class="audio-preset-row" role="tablist" aria-label="Focus audio presets">
-            <button class="audio-preset is-active" role="tab" aria-selected="true" data-src="audio/lofi1.mp3">🎧 Lofi</button>
-            <button class="audio-preset" role="tab" aria-selected="false" data-src="audio/rain.mp3">🌧 Rain</button>
-            <button class="audio-preset" role="tab" aria-selected="false" data-src="audio/brown.mp3">🌬 Brown Noise</button>
+            <button class="audio-preset is-active" role="tab" aria-selected="true" data-track="lofi" data-src="audio/lofi1.mp3">🎧 Lofi</button>
+            <button class="audio-preset" role="tab" aria-selected="false" data-track="rain" data-src="audio/rain.mp3">🌧 Rain</button>
+            <button class="audio-preset" role="tab" aria-selected="false" data-track="brown" data-src="audio/brown.mp3">🌬 Brown Noise</button>
           </div>
           <div class="focus-player-wrap">
             <audio id="focus-audio" preload="auto" loop></audio>
@@ -217,27 +217,64 @@
       const audioState = document.getElementById('focus-audio-state');
       const playToggle = document.getElementById('focus-play-toggle');
       const volumeSlider = document.getElementById('focus-volume');
-      const defaultSource = presets[0]?.dataset.src || '';
-      const defaultTitle = presets[0]?.textContent?.trim() || 'Focus Audio';
-      audio.loop = true;
 
-      if (defaultSource) {
-        audio.src = defaultSource;
-        audio.volume = Number(volumeSlider.value);
-        trackName.textContent = defaultTitle;
-        audio.load();
+      const trackLibrary = {
+        lofi: { label: '🎧 Lofi', src: 'audio/lofi1.mp3' },
+        rain: { label: '🌧 Rain', src: 'audio/rain.mp3' },
+        brown: { label: '🌬 Brown Noise', src: 'audio/brown.mp3' }
+      };
+
+      const fallbackTrack = trackLibrary.lofi;
+      audio.loop = true;
+      audio.preload = 'auto';
+      audio.volume = Number(volumeSlider.value);
+
+      function setPlayUiState(isPlaying) {
+        playToggle.textContent = isPlaying ? '❚❚' : '▶';
+        playToggle.classList.toggle('is-playing', isPlaying);
+        playToggle.setAttribute('aria-label', isPlaying ? 'Pause focus audio' : 'Play focus audio');
+      }
+
+      function resolveTrackFromPreset(preset) {
+        const key = preset.dataset.track || '';
+        const mappedTrack = trackLibrary[key];
+        if (mappedTrack) return mappedTrack;
+        const fallbackSrc = preset.dataset.src || fallbackTrack.src;
+        const fallbackLabel = preset.textContent?.trim() || fallbackTrack.label;
+        return { label: fallbackLabel, src: fallbackSrc };
+      }
+
+      function selectTrack(preset) {
+        const selectedTrack = resolveTrackFromPreset(preset);
+        const nextSource = new URL(selectedTrack.src, window.location.href).href;
+        const sourceChanged = audio.src !== nextSource;
+
+        if (sourceChanged) {
+          audio.src = nextSource;
+          audio.load();
+        }
+
+        trackName.textContent = selectedTrack.label;
+        presets.forEach((entry) => {
+          const isCurrent = entry === preset;
+          entry.classList.toggle('is-active', isCurrent);
+          entry.setAttribute('aria-selected', String(isCurrent));
+        });
+        return sourceChanged;
+      }
+
+      const activePreset = presets.find((preset) => preset.classList.contains('is-active')) || presets[0];
+      if (activePreset) {
+        selectTrack(activePreset);
+      } else {
+        audio.src = new URL(fallbackTrack.src, window.location.href).href;
+        trackName.textContent = fallbackTrack.label;
       }
 
       async function startPlayback() {
-        if (!audio.src && defaultSource) {
-          audio.src = defaultSource;
-        }
-
         try {
           await audio.play();
-          playToggle.textContent = '❚❚';
-          playToggle.classList.add('is-playing');
-          playToggle.setAttribute('aria-label', 'Pause focus audio');
+          setPlayUiState(true);
           audioState.textContent = 'Playing';
         } catch (error) {
           console.error('Audio playback failed:', error);
@@ -247,9 +284,7 @@
 
       function pausePlayback() {
         audio.pause();
-        playToggle.textContent = '▶';
-        playToggle.classList.remove('is-playing');
-        playToggle.setAttribute('aria-label', 'Play focus audio');
+        setPlayUiState(false);
         audioState.textContent = 'Paused';
       }
 
@@ -264,22 +299,10 @@
 
       presets.forEach((preset) => {
         preset.addEventListener('click', async () => {
-          const src = preset.dataset.src;
-          if (!src) return;
-          const label = preset.textContent?.trim() || 'Focus Audio';
           const shouldPlay = !audio.paused;
-          audio.src = src;
-          audio.load();
-          trackName.textContent = label;
-
-          presets.forEach((entry) => {
-            const isCurrent = entry === preset;
-            entry.classList.toggle('is-active', isCurrent);
-            entry.setAttribute('aria-selected', String(isCurrent));
-          });
-
+          const sourceChanged = selectTrack(preset);
           audioState.textContent = shouldPlay ? 'Switching track…' : 'Ready to play';
-          if (shouldPlay) await startPlayback();
+          if (shouldPlay || sourceChanged) await startPlayback();
         });
       });
 
@@ -288,6 +311,9 @@
       });
       audio.addEventListener('pause', () => {
         if (!audio.ended) audioState.textContent = 'Paused';
+      });
+      audio.addEventListener('ended', () => {
+        setPlayUiState(false);
       });
       audio.addEventListener('waiting', () => {
         audioState.textContent = 'Buffering…';
