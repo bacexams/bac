@@ -30,12 +30,26 @@
       <aside class="study-tools" aria-label="Study tools">
         <section class="glass-card compact">
           <h3>Focus Audio</h3>
-          <div class="audio-preset-row">
-            <button class="theme-chip audio-preset is-active" data-src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1f15f2bfc4.mp3?filename=lofi-study-112191.mp3">Lofi</button>
-            <button class="theme-chip audio-preset" data-src="https://cdn.pixabay.com/download/audio/2022/08/04/audio_3ed66f8ac8.mp3?filename=rain-and-thunder-112522.mp3">Rain</button>
-            <button class="theme-chip audio-preset" data-src="https://cdn.pixabay.com/download/audio/2022/01/20/audio_7d84fb96ef.mp3?filename=white-noise-5234.mp3">White Noise</button>
+          <p class="focus-audio-copy">Pick a soundscape, press play, and lock in.</p>
+          <div class="audio-preset-row" role="tablist" aria-label="Focus audio presets">
+            <button class="audio-preset is-active" role="tab" aria-selected="true" data-src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1f15f2bfc4.mp3?filename=lofi-study-112191.mp3">🎧 Lofi</button>
+            <button class="audio-preset" role="tab" aria-selected="false" data-src="https://cdn.pixabay.com/download/audio/2022/08/04/audio_3ed66f8ac8.mp3?filename=rain-and-thunder-112522.mp3">🌧 Rain</button>
+            <button class="audio-preset" role="tab" aria-selected="false" data-src="https://cdn.pixabay.com/download/audio/2022/01/20/audio_7d84fb96ef.mp3?filename=white-noise-5234.mp3">🌬 White Noise</button>
           </div>
-          <audio id="focus-audio" controls preload="none"></audio>
+          <div class="focus-player-wrap">
+            <audio id="focus-audio" preload="none" loop></audio>
+            <div class="focus-player-meta">
+              <strong id="focus-track-name">🎧 Lofi</strong>
+              <span id="focus-audio-state">Ready to play</span>
+            </div>
+            <div class="focus-player-controls">
+              <button id="focus-play-toggle" class="focus-icon-button" type="button" aria-label="Play focus audio">▶</button>
+              <label class="focus-volume">
+                <span>Volume</span>
+                <input id="focus-volume" type="range" min="0" max="1" value="0.55" step="0.01" aria-label="Audio volume">
+              </label>
+            </div>
+          </div>
         </section>
 
         <section class="glass-card compact">
@@ -198,20 +212,82 @@
 
       const audio = document.getElementById('focus-audio');
       const presets = Array.from(document.querySelectorAll('.audio-preset'));
+      const trackName = document.getElementById('focus-track-name');
+      const audioState = document.getElementById('focus-audio-state');
+      const playToggle = document.getElementById('focus-play-toggle');
+      const volumeSlider = document.getElementById('focus-volume');
       const defaultSource = presets[0]?.dataset.src || '';
+      const defaultTitle = presets[0]?.textContent?.trim() || 'Focus Audio';
       if (defaultSource) {
         audio.src = defaultSource;
+        audio.volume = Number(volumeSlider.value);
+        trackName.textContent = defaultTitle;
       }
 
+      async function startPlayback() {
+        if (!audio.src && defaultSource) {
+          audio.src = defaultSource;
+        }
+
+        try {
+          await audio.play();
+          playToggle.textContent = '❚❚';
+          playToggle.classList.add('is-playing');
+          playToggle.setAttribute('aria-label', 'Pause focus audio');
+          audioState.textContent = 'Playing';
+        } catch (error) {
+          console.error('Audio playback failed:', error);
+          audioState.textContent = 'Playback blocked. Click play again.';
+        }
+      }
+
+      function pausePlayback() {
+        audio.pause();
+        playToggle.textContent = '▶';
+        playToggle.classList.remove('is-playing');
+        playToggle.setAttribute('aria-label', 'Play focus audio');
+        audioState.textContent = 'Paused';
+      }
+
+      playToggle.addEventListener('click', () => {
+        if (audio.paused) startPlayback();
+        else pausePlayback();
+      });
+
+      volumeSlider.addEventListener('input', () => {
+        audio.volume = Number(volumeSlider.value);
+      });
+
       presets.forEach((preset) => {
-        preset.addEventListener('click', () => {
+        preset.addEventListener('click', async () => {
           const src = preset.dataset.src;
           if (!src) return;
+          const label = preset.textContent?.trim() || 'Focus Audio';
           const shouldPlay = !audio.paused;
           audio.src = src;
-          presets.forEach((entry) => entry.classList.toggle('is-active', entry === preset));
-          if (shouldPlay) audio.play().catch(() => {});
+          audio.load();
+          trackName.textContent = label;
+          presets.forEach((entry) => {
+            const isCurrent = entry === preset;
+            entry.classList.toggle('is-active', isCurrent);
+            entry.setAttribute('aria-selected', String(isCurrent));
+          });
+          audioState.textContent = shouldPlay ? 'Switching track…' : 'Ready to play';
+          if (shouldPlay) await startPlayback();
         });
+      });
+
+      audio.addEventListener('playing', () => {
+        audioState.textContent = 'Playing';
+      });
+      audio.addEventListener('pause', () => {
+        if (!audio.ended) audioState.textContent = 'Paused';
+      });
+      audio.addEventListener('waiting', () => {
+        audioState.textContent = 'Buffering…';
+      });
+      audio.addEventListener('error', () => {
+        audioState.textContent = 'This stream failed. Try another track.';
       });
 
       const timerDisplay = document.getElementById('timer-display');
