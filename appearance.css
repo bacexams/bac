@@ -1301,9 +1301,11 @@ body{
 .todo-item{ display: grid; grid-template-columns: 28px 1fr 26px; align-items: center; gap: 8px; padding: 10px; border-radius: 12px; background: rgba(0,0,0,0.12); }
 .todo-check{ width: 22px;height: 22px;border-radius: 50%;border:1px solid var(--border);background: transparent;cursor:pointer; }
 .todo-check.is-done{ background: linear-gradient(135deg, #2db17b, #1e805a); border-color: #5fd6a1; }
+.todo-check.is-done::after{ content: "✓"; color: #fff; font-size: 14px; font-weight: 800; line-height: 1; display: inline-flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
 .todo-text.is-done{ text-decoration: line-through; opacity: .72; }
 .todo-delete{ border:0;background: transparent;color: var(--muted);font-size:1rem;cursor:pointer; }
-.todo-toggle-all{ margin-top: 10px; border: 1px solid var(--border); background: var(--surface-strong); color: var(--text); border-radius: 10px; padding: 8px 10px; cursor:pointer; font-weight: 700; }
+.todo-item.is-dragging{ opacity: 0.6; }
+.todo-toggle-all{ margin: 10px auto 0; display: block; border: 1px solid var(--border); background: var(--surface-strong); color: var(--text); border-radius: 10px; padding: 8px 10px; cursor:pointer; font-weight: 700; }
 .todo-form .button{ color: #fff; }
 
 .study-tools{ width: min(320px, 100%); display: grid; gap: 12px; align-self: stretch; }
