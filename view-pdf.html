@@ -209,6 +209,8 @@
         resizeTimer = setTimeout(() => rerenderWithZoom(zoomLevel), 140);
       });
 
+    </script>
+    <script>
       const audio = document.getElementById('focus-audio');
       const presets = Array.from(document.querySelectorAll('.audio-preset'));
       const trackName = document.getElementById('focus-track-name');
@@ -218,6 +220,7 @@
       const defaultSource = presets[0]?.dataset.src || '';
       const defaultTitle = presets[0]?.textContent?.trim() || 'Focus Audio';
       audio.loop = true;
+
       if (defaultSource) {
         audio.src = defaultSource;
         audio.volume = Number(volumeSlider.value);
@@ -268,11 +271,13 @@
           audio.src = src;
           audio.load();
           trackName.textContent = label;
+
           presets.forEach((entry) => {
             const isCurrent = entry === preset;
             entry.classList.toggle('is-active', isCurrent);
             entry.setAttribute('aria-selected', String(isCurrent));
           });
+
           audioState.textContent = shouldPlay ? 'Switching track…' : 'Ready to play';
           if (shouldPlay) await startPlayback();
         });
@@ -324,7 +329,7 @@
 
       timerReset.addEventListener('click', () => {
         clearInterval(timerId);
-        remainingSeconds = (Math.max(1, Number(timerInput.value) || 90) * 60);
+        remainingSeconds = Math.max(1, Number(timerInput.value) || 90) * 60;
         renderTimer();
       });
 
