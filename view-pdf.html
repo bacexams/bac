@@ -31,12 +31,12 @@
         <section class="glass-card compact">
           <h3>Music</h3>
           <div class="audio-preset-row" role="tablist" aria-label="Focus audio presets">
-            <button class="audio-preset is-active" role="tab" aria-selected="true" data-src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1f15f2bfc4.mp3?filename=lofi-study-112191.mp3">🎧 Lofi</button>
-            <button class="audio-preset" role="tab" aria-selected="false" data-src="https://cdn.pixabay.com/download/audio/2022/08/04/audio_3ed66f8ac8.mp3?filename=rain-and-thunder-112522.mp3">🌧 Rain</button>
-            <button class="audio-preset" role="tab" aria-selected="false" data-src="https://cdn.pixabay.com/download/audio/2022/01/20/audio_7d84fb96ef.mp3?filename=white-noise-5234.mp3">🌬 White Noise</button>
+            <button class="audio-preset is-active" role="tab" aria-selected="true" data-src="audio/lofi1.mp3">🎧 Lofi</button>
+            <button class="audio-preset" role="tab" aria-selected="false" data-src="audio/rain.mp3">🌧 Rain</button>
+            <button class="audio-preset" role="tab" aria-selected="false" data-src="audio/brown.mp3">🌬 Brown Noise</button>
           </div>
           <div class="focus-player-wrap">
-            <audio id="focus-audio" preload="none" loop></audio>
+            <audio id="focus-audio" preload="auto" loop></audio>
             <div class="focus-player-meta">
               <strong id="focus-track-name">🎧 Lofi</strong>
               <span id="focus-audio-state">Ready to play</span>
@@ -217,10 +217,12 @@
       const volumeSlider = document.getElementById('focus-volume');
       const defaultSource = presets[0]?.dataset.src || '';
       const defaultTitle = presets[0]?.textContent?.trim() || 'Focus Audio';
+      audio.loop = true;
       if (defaultSource) {
         audio.src = defaultSource;
         audio.volume = Number(volumeSlider.value);
         trackName.textContent = defaultTitle;
+        audio.load();
       }
 
       async function startPlayback() {
