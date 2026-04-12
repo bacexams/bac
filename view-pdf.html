@@ -29,16 +29,20 @@
 
       <aside class="study-tools" aria-label="Study tools">
         <section class="glass-card compact">
-          <h3>Minuteur</h3>
+          <h3 class="timer-title">Minuteur</h3>
+          <p class="timer-subtitle">Durée en minutes</p>
+          <div id="timer-display" class="timer-display">120:00</div>
           <form id="timer-form" class="timer-form">
-            <label for="timer-minutes">Durée en minutes</label>
-            <input id="timer-minutes" type="number" min="1" max="360" value="90">
+            <div class="timer-adjust" aria-label="Choisir la durée">
+              <button class="timer-step-button" id="timer-minus" type="button" aria-label="Retirer une minute">−</button>
+              <input id="timer-minutes" type="number" min="1" max="360" value="90">
+              <button class="timer-step-button" id="timer-plus" type="button" aria-label="Ajouter une minute">+</button>
+            </div>
             <div class="timer-actions">
-              <button class="button" type="submit">▶︎</button>
-              <button id="timer-reset" class="button" type="button">↻</button>
+              <button class="button timer-main-button" type="submit">Démarrer</button>
+              <button id="timer-reset" class="button timer-main-button" type="button">Réinitialiser</button>
             </div>
           </form>
-          <div id="timer-display" class="timer-display">120:00</div>
         </section>
       </aside>
     </div>
@@ -192,6 +196,8 @@
       const timerForm = document.getElementById('timer-form');
       const timerInput = document.getElementById('timer-minutes');
       const timerReset = document.getElementById('timer-reset');
+      const timerMinus = document.getElementById('timer-minus');
+      const timerPlus = document.getElementById('timer-plus');
       let remainingSeconds = 90 * 60;
       let timerId = null;
 
@@ -223,6 +229,18 @@
         clearInterval(timerId);
         remainingSeconds = Math.max(1, Number(timerInput.value) || 90) * 60;
         renderTimer();
+      });
+
+      timerMinus.addEventListener('click', () => {
+        const currentValue = Math.max(1, Math.min(360, Number(timerInput.value) || 1));
+        const nextValue = Math.max(1, currentValue - 1);
+        timerInput.value = String(nextValue);
+      });
+
+      timerPlus.addEventListener('click', () => {
+        const currentValue = Math.max(1, Math.min(360, Number(timerInput.value) || 1));
+        const nextValue = Math.min(360, currentValue + 1);
+        timerInput.value = String(nextValue);
       });
 
       renderTimer();
