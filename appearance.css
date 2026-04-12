@@ -1097,7 +1097,8 @@ body{
   position: fixed;
   top: 70px;
   left: 14px;
-  z-index: 49;
+  z-index: 2000;
+  isolation: isolate;
 }
 
 .sound-toggle{
@@ -1111,7 +1112,8 @@ body{
   font-family: "Outfit", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 14px 32px rgba(0,0,0,0.35);
+  box-shadow: 0 16px 42px rgba(0,0,0,0.48);
+  backdrop-filter: blur(10px);
   transition: transform 220ms cubic-bezier(.2,.7,.2,1), border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
 }
 
@@ -1141,6 +1143,8 @@ body{
   transform: translateY(-8px);
   transition: max-height 280ms ease, opacity 220ms ease, transform 280ms ease;
   min-width: 170px;
+  z-index: 2001;
+  box-shadow: 0 16px 36px rgba(0,0,0,0.45);
 }
 
 .sound-options.is-open{

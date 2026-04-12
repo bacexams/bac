@@ -264,16 +264,152 @@
       const soundOptions = document.getElementById('sound-options');
 
       const soundTracks = [
-        { id: 'lofi', label: 'Lofi', file: 'audio/lofi1.mp3' },
-        { id: 'rain', label: 'Rain', file: 'audio/rain.mp3' },
-        { id: 'brown-noise', label: 'Brown Noise', file: 'audio/brown.mp3' },
+        { id: 'lofi', label: 'Lofi' },
+        { id: 'rain', label: 'Rain' },
+        { id: 'brown-noise', label: 'Brown Noise' },
       ];
 
-      const audioPlayer = new Audio();
-      audioPlayer.loop = true;
-      audioPlayer.preload = 'none';
-
       let activeTrackId = '';
+      const soundEngine = {
+        context: null,
+        cleanup: null,
+      };
+
+      function ensureAudioContext() {
+        if (!soundEngine.context) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) {
+            throw new Error('Web Audio API is not supported in this browser.');
+          }
+          soundEngine.context = new AudioContextClass();
+        }
+        return soundEngine.context;
+      }
+
+      function stopActiveSound() {
+        if (typeof soundEngine.cleanup === 'function') {
+          soundEngine.cleanup();
+          soundEngine.cleanup = null;
+        }
+      }
+
+      function startBrownNoise(ctx) {
+        const bufferSize = 2 * ctx.sampleRate;
+        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        let lastOut = 0;
+
+        for (let i = 0; i < bufferSize; i += 1) {
+          const white = Math.random() * 2 - 1;
+          lastOut = (lastOut + (0.02 * white)) / 1.02;
+          output[i] = lastOut * 3.4;
+        }
+
+        const source = ctx.createBufferSource();
+        source.buffer = noiseBuffer;
+        source.loop = true;
+
+        const gain = ctx.createGain();
+        gain.gain.value = 0.22;
+
+        source.connect(gain);
+        gain.connect(ctx.destination);
+        source.start();
+
+        return () => {
+          source.stop();
+          source.disconnect();
+          gain.disconnect();
+        };
+      }
+
+      function startRain(ctx) {
+        const bufferSize = 2 * ctx.sampleRate;
+        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i += 1) {
+          output[i] = Math.random() * 2 - 1;
+        }
+
+        const source = ctx.createBufferSource();
+        source.buffer = noiseBuffer;
+        source.loop = true;
+
+        const lowpass = ctx.createBiquadFilter();
+        lowpass.type = 'lowpass';
+        lowpass.frequency.value = 2100;
+        lowpass.Q.value = 0.8;
+
+        const highpass = ctx.createBiquadFilter();
+        highpass.type = 'highpass';
+        highpass.frequency.value = 300;
+        highpass.Q.value = 0.6;
+
+        const gain = ctx.createGain();
+        gain.gain.value = 0.18;
+
+        source.connect(lowpass);
+        lowpass.connect(highpass);
+        highpass.connect(gain);
+        gain.connect(ctx.destination);
+        source.start();
+
+        return () => {
+          source.stop();
+          source.disconnect();
+          lowpass.disconnect();
+          highpass.disconnect();
+          gain.disconnect();
+        };
+      }
+
+      function startLofi(ctx) {
+        const master = ctx.createGain();
+        master.gain.value = 0.14;
+        master.connect(ctx.destination);
+
+        const pulseLfo = ctx.createOscillator();
+        const pulseDepth = ctx.createGain();
+        pulseLfo.frequency.value = 0.12;
+        pulseDepth.gain.value = 0.05;
+        pulseLfo.connect(pulseDepth);
+        pulseLfo.start();
+
+        const tones = [
+          { freq: 174.61, type: 'triangle' },
+          { freq: 220.0, type: 'sine' },
+          { freq: 261.63, type: 'triangle' },
+        ];
+
+        const nodes = tones.map((tone) => {
+          const osc = ctx.createOscillator();
+          osc.type = tone.type;
+          osc.frequency.value = tone.freq;
+
+          const gain = ctx.createGain();
+          gain.gain.value = 0.12;
+          pulseDepth.connect(gain.gain);
+
+          osc.connect(gain);
+          gain.connect(master);
+          osc.start();
+
+          return { osc, gain };
+        });
+
+        return () => {
+          pulseLfo.stop();
+          pulseLfo.disconnect();
+          pulseDepth.disconnect();
+          nodes.forEach(({ osc, gain }) => {
+            osc.stop();
+            osc.disconnect();
+            gain.disconnect();
+          });
+          master.disconnect();
+        };
+      }
 
       function closeSoundMenu() {
         soundOptions.classList.remove('is-open');
@@ -299,16 +435,27 @@
       async function playTrack(track) {
         if (!track) return;
 
-        if (activeTrackId === track.id && !audioPlayer.paused) {
-          audioPlayer.pause();
+        if (activeTrackId === track.id) {
+          stopActiveSound();
           activeTrackId = '';
           syncActiveTrackUi();
           return;
         }
 
         try {
-          audioPlayer.src = track.file;
-          await audioPlayer.play();
+          const ctx = ensureAudioContext();
+          await ctx.resume();
+
+          stopActiveSound();
+
+          if (track.id === 'lofi') {
+            soundEngine.cleanup = startLofi(ctx);
+          } else if (track.id === 'rain') {
+            soundEngine.cleanup = startRain(ctx);
+          } else if (track.id === 'brown-noise') {
+            soundEngine.cleanup = startBrownNoise(ctx);
+          }
+
           activeTrackId = track.id;
           syncActiveTrackUi();
         } catch (error) {
