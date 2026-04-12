@@ -1216,7 +1216,59 @@ body{
 .glass-card.compact{ padding: 12px; }
 .timer-form{ display: grid; gap: 8px; text-align: center; }
 .timer-actions{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.timer-display{ margin-top: 10px; text-align: center; font-size: 2rem; font-weight: 800; letter-spacing: 1px; width: 100%; }
+.timer-title{ font-size: 1.3rem !important; margin-bottom: 4px !important; }
+.timer-subtitle{ margin: 0 0 4px; text-align: center; color: var(--muted); font-weight: 700; font-size: 0.95rem; }
+.timer-display{
+  margin: 4px 0 10px;
+  text-align: center;
+  font-size: 2.35rem;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+  width: 100%;
+}
+.timer-adjust{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+.timer-adjust input{
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.timer-adjust input::-webkit-outer-spin-button,
+.timer-adjust input::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
+.timer-adjust input[type=number]{
+  -moz-appearance: textfield;
+}
+.timer-main-button{ font-weight: 700; }
+.timer-step-button{
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+  background: linear-gradient(160deg, rgba(95, 170, 255, 0.3), rgba(58, 114, 255, 0.18));
+  color: var(--text);
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  font-size: 1.35rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+  transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+}
+.timer-step-button:hover{
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 12px 22px rgba(0,0,0,0.3);
+  filter: brightness(1.08);
+}
+.timer-step-button:active{ transform: translateY(0) scale(0.98); }
+.timer-step-button:focus-visible{
+  outline: 2px solid rgba(124,182,255,0.75);
+  outline-offset: 2px;
+}
 .timer-display.is-finished{ animation: pulse 500ms ease 3; }
 
 @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)} }
