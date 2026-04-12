@@ -707,7 +707,7 @@ color: color-mix(in srgb, #071a33 86%, var(--accent) 14%);
 padding: 10px 20px;
 border-radius: 999px;
 box-shadow:
-  0 10px 22px color-mix(in srgb, var(--accent) 42%, transparent),
+  0 10px 22px rgba(0,0,0,0.18),
   inset 0 1px 0 rgba(255,255,255,0.35);
 transition: transform 0.22s ease, filter 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
@@ -738,8 +738,8 @@ transform: translateY(-2px) scale(1.02);
 filter: saturate(1.08) brightness(1.05);
 border-color: color-mix(in srgb, var(--accent) 52%, #ffffff 48%);
 box-shadow:
-  0 14px 26px color-mix(in srgb, var(--accent) 50%, transparent),
-  0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+  0 14px 26px rgba(0,0,0,0.24),
+  inset 0 1px 0 rgba(255,255,255,0.35);
 }
 
 .index-enter-button:hover::before{
@@ -1020,6 +1020,15 @@ body{
 .theme-ciel h1:not(.main-title){
   color: #10263f;
   text-shadow: none;
+}
+
+.theme-clair .index-brand-title,
+.theme-clair .index-title,
+.theme-clair .index-card-title,
+.theme-ciel .index-brand-title,
+.theme-ciel .index-title,
+.theme-ciel .index-card-title{
+  color: #10263f;
 }
 
 .theme-clair .timebox .num,
