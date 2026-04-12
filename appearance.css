@@ -1183,6 +1183,7 @@ body{
   background: var(--surface-strong);
   color: var(--text);
   border-radius: var(--radius);
+  width: 122px;
   padding: 12px 18px;
   min-height: 46px;
   font-size: 1rem;
@@ -1305,7 +1306,7 @@ body{
 .todo-text.is-done{ text-decoration: line-through; opacity: .72; }
 .todo-delete{ border:0;background: transparent;color: var(--muted);font-size:1rem;cursor:pointer; }
 .todo-item.is-dragging{ opacity: 0.6; }
-.todo-toggle-all{ margin: 10px auto 0; display: block; border: 1px solid var(--border); background: var(--surface-strong); color: var(--text); border-radius: 10px; padding: 8px 10px; cursor:pointer; font-weight: 700; }
+.todo-toggle-all{ margin: 10px auto 0; display: block; border: 1px solid var(--border); background: var(--surface-strong); color: var(--text); border-radius: 10px; padding: 8px 10px; cursor:pointer; font-weight: 700; font-family: inherit; }
 .todo-form .button{ color: #fff; }
 
 .study-tools{ width: min(320px, 100%); display: grid; gap: 12px; align-self: stretch; }
