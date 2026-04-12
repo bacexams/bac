@@ -687,28 +687,77 @@ color: var(--muted);
 .index-enter-button{
 margin: auto auto 0;
 min-width: 130px;
-border: 0;
+border: 1px solid rgba(255,255,255,0.22);
 cursor: pointer;
 font-family: inherit;
 font-size: 0.98rem;
 font-weight: 700;
-background: linear-gradient(135deg, #8ec0ff, #6da6ff);
-color: #071a33;
+letter-spacing: 0.2px;
+position: relative;
+isolation: isolate;
+overflow: hidden;
+background: linear-gradient(140deg, #8ec0ff 0%, #6da6ff 55%, #5f9dff 100%);
+background: linear-gradient(
+  140deg,
+  color-mix(in srgb, var(--accent) 56%, #ffffff 44%) 0%,
+  color-mix(in srgb, var(--accent) 80%, #7ee6ff 20%) 52%,
+  color-mix(in srgb, var(--accent) 73%, #0f1d35 27%) 100%
+);
+color: color-mix(in srgb, #071a33 86%, var(--accent) 14%);
 padding: 10px 20px;
 border-radius: 999px;
-box-shadow: 0 10px 22px rgba(16, 76, 165, 0.36);
-transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+box-shadow:
+  0 10px 22px color-mix(in srgb, var(--accent) 42%, transparent),
+  inset 0 1px 0 rgba(255,255,255,0.35);
+transition: transform 0.22s ease, filter 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.index-enter-button::before{
+content: "";
+position: absolute;
+inset: 0;
+border-radius: inherit;
+background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,0.5) 48%, transparent 76%);
+transform: translateX(-135%);
+transition: transform 0.55s ease;
+z-index: -1;
+}
+
+.index-enter-button::after{
+content: "";
+position: absolute;
+inset: 2px;
+border-radius: inherit;
+border: 1px solid color-mix(in srgb, var(--accent) 24%, #ffffff 76%);
+opacity: 0.45;
+pointer-events: none;
 }
 
 .index-enter-button:hover{
-transform: translateY(-1px);
-filter: brightness(1.04);
-box-shadow: 0 13px 24px rgba(16, 76, 165, 0.46);
+transform: translateY(-2px) scale(1.02);
+filter: saturate(1.08) brightness(1.05);
+border-color: color-mix(in srgb, var(--accent) 52%, #ffffff 48%);
+box-shadow:
+  0 14px 26px color-mix(in srgb, var(--accent) 50%, transparent),
+  0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.index-enter-button:hover::before{
+transform: translateX(135%);
+}
+
+.index-level-card:hover .index-enter-button{
+transform: translateY(-2px);
 }
 
 .index-enter-button:focus-visible{
-outline: 2px solid rgba(124,182,255,0.9);
+outline: 2px solid color-mix(in srgb, var(--accent) 72%, #ffffff 28%);
 outline-offset: 3px;
+}
+
+.theme-clair .index-enter-button,
+.theme-ciel .index-enter-button{
+color: #072038;
 }
 
 @media (max-width: 640px){
