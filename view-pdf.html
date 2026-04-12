@@ -364,50 +364,15 @@
         };
       }
 
-      function startLofi(ctx) {
-        const master = ctx.createGain();
-        master.gain.value = 0.14;
-        master.connect(ctx.destination);
-
-        const pulseLfo = ctx.createOscillator();
-        const pulseDepth = ctx.createGain();
-        pulseLfo.frequency.value = 0.12;
-        pulseDepth.gain.value = 0.05;
-        pulseLfo.connect(pulseDepth);
-        pulseLfo.start();
-
-        const tones = [
-          { freq: 174.61, type: 'triangle' },
-          { freq: 220.0, type: 'sine' },
-          { freq: 261.63, type: 'triangle' },
-        ];
-
-        const nodes = tones.map((tone) => {
-          const osc = ctx.createOscillator();
-          osc.type = tone.type;
-          osc.frequency.value = tone.freq;
-
-          const gain = ctx.createGain();
-          gain.gain.value = 0.12;
-          pulseDepth.connect(gain.gain);
-
-          osc.connect(gain);
-          gain.connect(master);
-          osc.start();
-
-          return { osc, gain };
-        });
+      async function startLofi() {
+        const lofiAudio = new Audio('/audio/lofi1.mp3');
+        lofiAudio.loop = true;
+        lofiAudio.volume = 0.35;
+        await lofiAudio.play();
 
         return () => {
-          pulseLfo.stop();
-          pulseLfo.disconnect();
-          pulseDepth.disconnect();
-          nodes.forEach(({ osc, gain }) => {
-            osc.stop();
-            osc.disconnect();
-            gain.disconnect();
-          });
-          master.disconnect();
+          lofiAudio.pause();
+          lofiAudio.currentTime = 0;
         };
       }
 
@@ -443,16 +408,17 @@
         }
 
         try {
-          const ctx = ensureAudioContext();
-          await ctx.resume();
-
           stopActiveSound();
 
           if (track.id === 'lofi') {
-            soundEngine.cleanup = startLofi(ctx);
+            soundEngine.cleanup = await startLofi();
           } else if (track.id === 'rain') {
+            const ctx = ensureAudioContext();
+            await ctx.resume();
             soundEngine.cleanup = startRain(ctx);
           } else if (track.id === 'brown-noise') {
+            const ctx = ensureAudioContext();
+            await ctx.resume();
             soundEngine.cleanup = startBrownNoise(ctx);
           }
 
