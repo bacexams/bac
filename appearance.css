@@ -1191,6 +1191,7 @@ body{
   letter-spacing: 0;
   cursor: pointer;
   box-shadow: 0 12px 28px rgba(0,0,0,0.32);
+  min-width: 124px;
   transition: transform 220ms cubic-bezier(.2,.7,.2,1), border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
 }
 
@@ -1375,7 +1376,7 @@ body{
   box-shadow: 0 18px 38px rgba(0, 0, 0, 0.35);
   transform: rotate(-1.1deg) scale(1.01);
 }
-.todo-toggle-all{ margin: 10px auto 0; display: block; border: 1px solid var(--border); background: var(--surface-strong); color: var(--text); border-radius: 10px; padding: 8px 10px; cursor:pointer; font-weight: 700; }
+.todo-toggle-all{ margin: 10px auto 0; display: block; border: 1px solid var(--border); background: var(--surface-strong); color: var(--text); border-radius: 10px; padding: 8px 10px; cursor:pointer; font-weight: 700; font-family: "Outfit", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
 .todo-form .button{ color: #fff; }
 
 .study-tools{ width: min(320px, 100%); display: grid; gap: 12px; align-self: stretch; }
