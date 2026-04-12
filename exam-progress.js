@@ -385,6 +385,80 @@
     Promise.all(uniqueLinks.map((link) => buildProgressBadgeForLink(link)));
   }
 
+
+
+  function parseTargetFromOnclick(onclickValue) {
+    if (!onclickValue) return '';
+    const match = onclickValue.match(/window\.location\.href\s*=\s*["']([^"']+)["']/i);
+    return match ? match[1] : '';
+  }
+
+  async function getProgressForTarget(target) {
+    if (!target) return null;
+
+    const pdfPath = getPdfPathFromHref(target);
+    if (pdfPath && isSubjectPdfPath(pdfPath)) {
+      const done = isDone(pdfPath) ? 1 : 0;
+      return { doneCount: done, total: 1, percentage: done ? 100 : 0 };
+    }
+
+    if (!/\.html?(?:$|[?#])/i.test(target) || /view-pdf\.html/i.test(target)) return null;
+
+    let targetUrl;
+    try {
+      targetUrl = new URL(target, window.location.href);
+    }
+    catch {
+      return null;
+    }
+
+    try {
+      const response = await fetch(targetUrl.href, { credentials: 'same-origin' });
+      if (!response.ok) return null;
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const subjectPaths = extractSubjectPathsFromDocument(doc, targetUrl.href);
+      if (!subjectPaths.length) return null;
+      return buildProgressData(subjectPaths);
+    }
+    catch {
+      return null;
+    }
+  }
+
+  function attachButtonProgress(button, percentage) {
+    if (!button || button.querySelector('.button-progress-track')) return;
+    button.classList.add('has-button-progress');
+
+    const track = document.createElement('span');
+    track.className = 'button-progress-track';
+    const fill = document.createElement('span');
+    fill.className = 'button-progress-fill';
+    fill.style.setProperty('--progress', `${percentage}%`);
+    track.appendChild(fill);
+    button.appendChild(track);
+  }
+
+  async function enhanceAllButtonsWithProgress() {
+    const anchors = Array.from(document.querySelectorAll('a.button[href]'));
+    const actionButtons = Array.from(document.querySelectorAll('button.index-enter-button[onclick]'));
+
+    await Promise.all(anchors.map(async (anchor) => {
+      const progress = await getProgressForTarget(anchor.getAttribute('href') || '');
+      if (!progress) return;
+      attachButtonProgress(anchor, progress.percentage);
+      anchor.title = `${progress.doneCount}/${progress.total} terminés`;
+    }));
+
+    await Promise.all(actionButtons.map(async (button) => {
+      const progress = await getProgressForTarget(parseTargetFromOnclick(button.getAttribute('onclick') || ''));
+      if (!progress) return;
+      attachButtonProgress(button, progress.percentage);
+      button.title = `${progress.doneCount}/${progress.total} terminés`;
+    }));
+  }
+
   function enhancePdfViewerPage() {
     const rawPdf = new URLSearchParams(window.location.search).get('pdf') || '';
     if (!rawPdf) return;
@@ -433,4 +507,5 @@
   enhanceExamListPage();
   enhanceSessionProgressLinks();
   enhancePdfViewerPage();
+  enhanceAllButtonsWithProgress();
 })();
