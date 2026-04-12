@@ -29,8 +29,7 @@
 
       <aside class="study-tools" aria-label="Study tools">
         <section class="glass-card compact">
-          <h3>Focus Audio</h3>
-          <p class="focus-audio-copy">Pick a soundscape, press play, and lock in.</p>
+          <h3>Music</h3>
           <div class="audio-preset-row" role="tablist" aria-label="Focus audio presets">
             <button class="audio-preset is-active" role="tab" aria-selected="true" data-src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1f15f2bfc4.mp3?filename=lofi-study-112191.mp3">🎧 Lofi</button>
             <button class="audio-preset" role="tab" aria-selected="false" data-src="https://cdn.pixabay.com/download/audio/2022/08/04/audio_3ed66f8ac8.mp3?filename=rain-and-thunder-112522.mp3">🌧 Rain</button>
@@ -53,16 +52,16 @@
         </section>
 
         <section class="glass-card compact">
-          <h3>Exam Timer</h3>
+          <h3>Minuteur</h3>
           <form id="timer-form" class="timer-form">
-            <label for="timer-minutes">Durée (minutes)</label>
+            <label for="timer-minutes">Durée en minutes</label>
             <input id="timer-minutes" type="number" min="1" max="360" value="90">
             <div class="timer-actions">
-              <button class="button" type="submit">Start</button>
-              <button id="timer-reset" class="button" type="button">Reset</button>
+              <button class="button" type="submit">▶︎</button>
+              <button id="timer-reset" class="button" type="button">↻</button>
             </div>
           </form>
-          <div id="timer-display" class="timer-display">90:00</div>
+          <div id="timer-display" class="timer-display">120:00</div>
         </section>
       </aside>
     </div>
