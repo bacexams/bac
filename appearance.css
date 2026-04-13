@@ -15,6 +15,8 @@
 --title-line-start: rgba(124,182,255,0.2);
 --title-line-mid: rgba(124,182,255,0.95);
 --title-line-end: rgba(120,255,212,0.7);
+--progress-fill-start: var(--accent);
+--progress-fill-end: var(--title-line-end);
 
 --shadow: 0 14px 34px rgba(0,0,0,0.38);
 --radius: 18px;
@@ -793,7 +795,7 @@ width: 100%;
 
 .exam-progress-label {
   font-size: 0.9rem;
-  color: #9ec4ff;
+  color: var(--accent);
 }
 
 .exam-progress-track {
@@ -807,7 +809,7 @@ width: 100%;
 .exam-progress-fill {
   width: 0;
   height: 100%;
-  background: linear-gradient(90deg, #3fa7ff, #64dfb6);
+  background: linear-gradient(90deg, var(--progress-fill-start), var(--progress-fill-end));
   transition: width 180ms ease;
 }
 
@@ -1443,7 +1445,7 @@ body{
 .session-progress-badge {
   background:
     radial-gradient(circle at center, #0f1b2a 62%, transparent 63%),
-    conic-gradient(#64dfb6 var(--progress, 0%), #23364f 0);
+    conic-gradient(var(--progress-fill-end) var(--progress, 0%), #23364f 0);
   color: #e8f4ff;
   border: none;
   font-size: .62rem;
@@ -1473,7 +1475,7 @@ body{
   width: var(--progress, 0%);
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #3fa7ff, #64dfb6);
+  background: linear-gradient(90deg, var(--progress-fill-start), var(--progress-fill-end));
   transition: width 180ms ease;
 }
 
