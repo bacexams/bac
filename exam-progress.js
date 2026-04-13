@@ -1,7 +1,7 @@
 (function () {
   const STORAGE_KEY = 'bac.examProgress.v1';
   const THEME_KEY = 'bac.theme.choice';
-  const THEMES = ['theme-bleu', 'theme-clair', 'theme-vert', 'theme-rose', 'theme-rouge', 'theme-ciel', 'theme-noir', 'theme-gold', 'theme-ocean', 'theme-lavande', 'theme-forest', 'theme-sunset', 'theme-aurora', 'theme-mint', 'theme-grape'];
+  const THEMES = ['theme-bleu', 'theme-clair', 'theme-vert', 'theme-rose', 'theme-banana', 'theme-cotton', 'theme-noir', 'theme-gold', 'theme-peach', 'theme-lavande', 'theme-pistache', 'theme-sunset', 'theme-bubble', 'theme-sorbet', 'theme-grape'];
   const DEFAULT_THEME = 'theme-bleu';
 
   function normalizePdfPath(path) {
@@ -151,17 +151,17 @@
         <button type="button" class="theme-swatch" data-theme="theme-bleu" aria-label="Thème Bleu"></button>
         <button type="button" class="theme-swatch" data-theme="theme-clair" aria-label="Thème Clair"></button>
         <button type="button" class="theme-swatch" data-theme="theme-vert" aria-label="Thème Vert"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-rose" aria-label="Thème Rose vif"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-rouge" aria-label="Thème Rouge"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-ciel" aria-label="Thème Bleu clair"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-rose" aria-label="Thème Rose"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-banana" aria-label="Thème Banane"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-cotton" aria-label="Thème Pastel bleu"></button>
         <button type="button" class="theme-swatch" data-theme="theme-noir" aria-label="Thème Noir"></button>
         <button type="button" class="theme-swatch" data-theme="theme-gold" aria-label="Thème Doré"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-ocean" aria-label="Thème Océan"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-peach" aria-label="Thème Pêche"></button>
         <button type="button" class="theme-swatch" data-theme="theme-lavande" aria-label="Thème Lavande"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-forest" aria-label="Thème Forêt"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-pistache" aria-label="Thème Pistache"></button>
         <button type="button" class="theme-swatch" data-theme="theme-sunset" aria-label="Thème Sunset"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-aurora" aria-label="Thème Aurora"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-mint" aria-label="Thème Mint"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-bubble" aria-label="Thème Bubblegum"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-sorbet" aria-label="Thème Sorbet"></button>
         <button type="button" class="theme-swatch" data-theme="theme-grape" aria-label="Thème Grape"></button>
       </div>
     `;
