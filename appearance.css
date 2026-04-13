@@ -837,9 +837,9 @@ width: 100%;
   justify-content: center;
   font-size: 0;
   font-weight: 800;
-  background: #14263a;
-  border: 1px solid #4f79ad;
-  color: #a8d2ff;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--accent);
   flex: 0 0 auto;
 }
 
@@ -1444,9 +1444,9 @@ body{
 
 .session-progress-badge {
   background:
-    radial-gradient(circle at center, #0f1b2a 62%, transparent 63%),
-    conic-gradient(var(--progress-fill-end) var(--progress, 0%), #23364f 0);
-  color: #e8f4ff;
+    radial-gradient(circle at center, var(--surface-strong) 62%, transparent 63%),
+    conic-gradient(var(--progress-fill-end) var(--progress, 0%), var(--surface) 0);
+  color: var(--accent);
   border: none;
   font-size: .62rem;
 }
@@ -1460,15 +1460,7 @@ body{
 
 
 .button-progress-track{
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 8px;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.16);
-  overflow: hidden;
-  pointer-events: none;
+  display: none;
 }
 
 .button-progress-fill{
@@ -1480,7 +1472,7 @@ body{
 }
 
 .button.has-button-progress{
-  padding-bottom: 18px;
+  padding-bottom: 14px;
 }
 
 .button.has-button-progress .session-progress-badge{
