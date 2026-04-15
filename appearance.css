@@ -316,20 +316,20 @@ background: rgba(255,255,255,0.10);
 }
 
 .exam-layout{
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(260px, 1fr);
   gap: 16px;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 
 .pdf-reader{
-  flex: 1;
   min-width: 0;
   height: calc(100vh - 40px);
   max-height: calc(100vh - 40px);
   border: 1px solid var(--border);
   border-radius: 16px;
-  background: rgba(18, 24, 35, 0.78);
+  background: var(--surface);
   box-shadow: 0 10px 30px rgba(0,0,0,0.25);
   overflow: hidden;
   display: flex;
@@ -439,42 +439,26 @@ background: rgba(255,255,255,0.10);
 
 
 .study-tools{
-  width: min(430px, 38vw);
-  min-width: 320px;
-}
-
-.focus-panel{
-  display: flex;
-  flex-direction: column;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
   gap: 12px;
-  height: calc(100vh - 40px);
-  max-height: calc(100vh - 40px);
-  padding: 12px;
-  border-radius: 16px;
-  background: linear-gradient(180deg, rgba(11, 17, 28, 0.96), rgba(6, 11, 21, 0.98));
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 14px 38px rgba(0,0,0,0.32);
-  overflow: hidden;
 }
 
 .focus-block{
-  padding: 12px;
+  padding: 14px;
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background:
-    linear-gradient(155deg, rgba(129, 193, 255, 0.07), rgba(255,255,255,0.02) 44%, rgba(113, 255, 218, 0.03));
+  border: 1px solid var(--border);
+  background: var(--surface);
   display: flex;
   flex-direction: column;
   gap: 10px;
   text-align: center;
 }
 
-.timer-block{
-  flex: 1.05;
-}
-
+.timer-block,
 .ambiance-block{
-  flex: 0.95;
+  min-height: 0;
 }
 
 .focus-row{
@@ -488,7 +472,7 @@ background: rgba(255,255,255,0.10);
   margin: 0;
   width: 100%;
   text-align: center;
-  font-size: 1.03rem;
+  font-size: 1.34rem;
   font-weight: 800;
   font-family: "Manrope", "Outfit", "Inter", sans-serif;
   letter-spacing: 0.01em;
@@ -499,7 +483,7 @@ background: rgba(255,255,255,0.10);
   padding: 8px 4px;
   border-radius: 10px;
   text-align: center;
-  font-size: clamp(1.8rem, 2.8vw, 2.2rem);
+  font-size: clamp(2.2rem, 3.4vw, 2.9rem);
   line-height: 1;
   font-weight: 800;
   font-family: "Nunito", "Outfit", "Manrope", sans-serif;
@@ -528,8 +512,8 @@ background: rgba(255,255,255,0.10);
 .time-unit{
   display: grid;
   justify-items: center;
-  gap: 8px;
-  padding: 8px 6px;
+  gap: 6px;
+  padding: 6px 6px;
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.09);
   background: rgba(255,255,255,0.02);
@@ -546,7 +530,7 @@ background: rgba(255,255,255,0.10);
   text-align: center;
   font-size: 1.08rem;
   font-weight: 700;
-  padding: 6px 4px;
+  padding: 5px 4px;
   font-family: "Nunito", "Outfit", sans-serif;
 }
 
@@ -598,7 +582,7 @@ background: rgba(255,255,255,0.10);
 
 .timer-step-button{
   width: 30px;
-  height: 24px;
+  height: 18px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.16);
   background: rgba(255,255,255,0.08);
@@ -615,29 +599,14 @@ background: rgba(255,255,255,0.10);
 
 .ambiance-actions{
   display: grid;
-  gap: 10px;
+  gap: 12px;
   justify-items: center;
   margin-top: 4px;
 }
 
-.ambiance-label{
-  color: rgba(255,255,255,0.75);
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.sound-picker-shell{
-  width: 100%;
-  padding: 8px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.03);
-}
-
 .sound-select{
   width: 100%;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.17);
   background: rgba(8, 14, 25, 0.72);
   color: rgba(255,255,255,0.92);
@@ -646,6 +615,7 @@ background: rgba(255,255,255,0.10);
   font-weight: 700;
   font-family: "Outfit", "Inter", sans-serif;
   text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 .sound-play-circle{
@@ -676,16 +646,12 @@ background: rgba(255,255,255,0.10);
 
 @media (max-width: 900px){
   .exam-layout{
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
   .study-tools{
     width: 100%;
     min-width: 0;
-  }
-
-  .focus-panel{
-    height: auto;
-    max-height: none;
+    grid-template-rows: auto;
   }
 }
 

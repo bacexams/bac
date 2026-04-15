@@ -28,10 +28,9 @@
       </section>
 
       <aside class="study-tools" aria-label="Study tools">
-        <section class="focus-panel" aria-label="Focus assistant">
-          <section class="focus-block timer-block" aria-label="Study timer">
+        <section class="focus-block timer-block" aria-label="Study timer">
             <div class="focus-row">
-              <h4 class="focus-label">Session timer</h4>
+              <h4 class="focus-label">Minuteur</h4>
             </div>
 
             <div id="timer-display" class="timer-display" aria-live="polite">02:00:00</div>
@@ -69,18 +68,14 @@
             <h4 class="focus-label">Ambiance</h4>
 
             <div class="ambiance-actions">
-              <label class="ambiance-label" for="sound-select">Choose soundscape</label>
-              <div class="sound-picker-shell">
-                <select id="sound-select" class="sound-select" aria-label="Select ambiance">
+              <select id="sound-select" class="sound-select" aria-label="Select ambiance">
                   <option value="lofi">Lofi Focus</option>
                   <option value="rain">Rainfall</option>
                   <option value="brown-noise">Brown Noise</option>
                 </select>
-              </div>
               <button id="sound-play" class="sound-play-circle" type="button" aria-pressed="false" aria-label="Play ambiance">▶</button>
             </div>
           </section>
-        </section>
       </aside>
     </div>
 
