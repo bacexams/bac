@@ -317,7 +317,7 @@ background: rgba(255,255,255,0.10);
 
 .exam-layout{
   display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(260px, 1fr);
+  grid-template-columns: minmax(0, 7fr) minmax(320px, 3fr);
   gap: 16px;
   align-items: stretch;
 }
@@ -443,6 +443,8 @@ background: rgba(255,255,255,0.10);
   display: grid;
   grid-template-rows: 1fr 1fr;
   gap: 12px;
+  height: calc(100vh - 40px);
+  max-height: calc(100vh - 40px);
 }
 
 .focus-block{
@@ -472,11 +474,25 @@ background: rgba(255,255,255,0.10);
   margin: 0;
   width: 100%;
   text-align: center;
-  font-size: 1.34rem;
-  font-weight: 800;
-  font-family: "Manrope", "Outfit", "Inter", sans-serif;
-  letter-spacing: 0.01em;
-  color: rgba(255,255,255,0.9);
+  font-size: clamp(1.6rem, 2.6vw, 1.95rem);
+  font-weight: 850;
+  font-family: "Nunito", "Manrope", "Inter", sans-serif;
+  letter-spacing: 0.02em;
+  color: rgba(255,255,255,0.95);
+  position: relative;
+  padding-bottom: 12px;
+}
+
+.focus-label::after{
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 82px;
+  height: 3px;
+  border-radius: 999px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, var(--title-line-start), var(--title-line-mid), var(--title-line-end));
 }
 
 .timer-display{
@@ -511,7 +527,7 @@ background: rgba(255,255,255,0.10);
 
 .time-unit{
   display: grid;
-  justify-items: center;
+  justify-items: stretch;
   gap: 6px;
   padding: 6px 6px;
   border-radius: 12px;
@@ -581,20 +597,27 @@ background: rgba(255,255,255,0.10);
 }
 
 .timer-step-button{
-  width: 30px;
-  height: 18px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.16);
-  background: rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.95);
-  font-size: 0.82rem;
-  font-weight: 700;
+  width: 100%;
+  height: 24px;
+  border-radius: 9px;
+  border: 1px solid rgba(124,182,255,0.34);
+  background: linear-gradient(180deg, rgba(124,182,255,0.26), rgba(124,182,255,0.12));
+  color: rgba(255,255,255,0.98);
+  font-size: 0.9rem;
+  font-weight: 800;
   cursor: pointer;
   line-height: 1;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
 }
 
 .timer-step-button:hover{
-  background: rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, rgba(124,182,255,0.34), rgba(124,182,255,0.18));
+  border-color: rgba(124,182,255,0.55);
+  transform: translateY(-1px);
+}
+
+.timer-step-button:active{
+  transform: translateY(0);
 }
 
 .ambiance-actions{
@@ -604,18 +627,56 @@ background: rgba(255,255,255,0.10);
   margin-top: 4px;
 }
 
+.sound-select-stack{
+  width: 100%;
+  display: grid;
+  gap: 8px;
+}
+
 .sound-select{
   width: 100%;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.17);
-  background: rgba(8, 14, 25, 0.72);
-  color: rgba(255,255,255,0.92);
-  padding: 10px 12px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  font-family: "Outfit", "Inter", sans-serif;
+  border-radius: 14px;
+  border: 1px solid rgba(124,182,255,0.32);
+  background: linear-gradient(180deg, rgba(10,18,30,0.92), rgba(12,22,36,0.76));
+  color: rgba(255,255,255,0.96);
+  padding: 10px 14px;
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: "Nunito", "Manrope", "Inter", sans-serif;
   text-align: center;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+  text-align-last: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 16px rgba(0,0,0,0.2);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.sound-select:hover{
+  border-color: rgba(124,182,255,0.55);
+}
+
+.sound-select:focus-visible{
+  outline: none;
+  border-color: rgba(124,182,255,0.78);
+  box-shadow: 0 0 0 3px rgba(124,182,255,0.22);
+}
+
+.lofi-variant-wrap{
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-5px);
+  overflow: hidden;
+  pointer-events: none;
+  transition: max-height 260ms ease, opacity 260ms ease, transform 260ms ease;
+}
+
+.lofi-variant-wrap.is-visible{
+  max-height: 54px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.lofi-variant-select{
+  font-size: 0.95rem;
 }
 
 .sound-play-circle{
