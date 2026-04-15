@@ -781,38 +781,55 @@ width: 100%;
 }
 
 .exam-progress {
-  margin: 10px 0 16px;
-  padding: 10px 12px;
-  border: 1px solid #2f3f56;
+  margin: 10px auto 18px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
   border-radius: 12px;
-  background: #111922;
+  background: color-mix(in srgb, var(--surface-strong) 86%, transparent);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 16%, transparent);
 }
 
 .exam-progress-top {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-  color: #d9e5f5;
+  align-items: baseline;
+  margin-bottom: 10px;
 }
 
-.exam-progress-label {
+.exam-progress-value {
+  font-size: clamp(1.2rem, 1rem + 1.3vw, 1.75rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: color-mix(in srgb, var(--accent) 76%, #ffffff 24%);
+  text-shadow: 0 0 14px color-mix(in srgb, var(--accent) 32%, transparent);
+}
+
+.exam-progress-fraction {
   font-size: 0.9rem;
-  color: var(--accent);
+  font-weight: 600;
+  color: var(--muted);
 }
 
 .exam-progress-track {
-  width: 100%;
+  width: min(68%, 360px);
+  margin: 0 auto;
   height: 10px;
-  background: #293749;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
   border-radius: 999px;
   overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
 .exam-progress-fill {
   width: 0;
   height: 100%;
-  background: linear-gradient(90deg, var(--progress-fill-start), var(--progress-fill-end));
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--progress-fill-start) 86%, #ffffff 14%),
+    color-mix(in srgb, var(--accent) 62%, var(--title-line-mid) 38%),
+    color-mix(in srgb, var(--progress-fill-end) 88%, #ffffff 12%)
+  );
   transition: width 180ms ease;
 }
 
