@@ -441,7 +441,7 @@ background: rgba(255,255,255,0.10);
 .study-tools{
   min-width: 0;
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: minmax(0, 1.2fr) minmax(0, 0.8fr);
   gap: 12px;
   height: calc(100vh - 40px);
   max-height: calc(100vh - 40px);
@@ -456,6 +456,7 @@ background: rgba(255,255,255,0.10);
   flex-direction: column;
   gap: 10px;
   text-align: center;
+  overflow: hidden;
 }
 
 .timer-block,
@@ -499,7 +500,7 @@ background: rgba(255,255,255,0.10);
   padding: 8px 4px;
   border-radius: 10px;
   text-align: center;
-  font-size: clamp(2.2rem, 3.4vw, 2.9rem);
+  font-size: clamp(1.85rem, 2.9vw, 2.45rem);
   line-height: 1;
   font-weight: 800;
   font-family: "Nunito", "Outfit", "Manrope", sans-serif;
@@ -516,20 +517,21 @@ background: rgba(255,255,255,0.10);
 
 .timer-form{
   display: grid;
+  align-content: start;
   gap: 10px;
 }
 
 .time-columns{
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .time-unit{
   display: grid;
   justify-items: stretch;
-  gap: 6px;
-  padding: 6px 6px;
+  gap: 4px;
+  padding: 5px;
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.09);
   background: rgba(255,255,255,0.02);
@@ -544,9 +546,9 @@ background: rgba(255,255,255,0.10);
   background: rgba(0,0,0,0.22);
   color: rgba(255,255,255,0.95);
   text-align: center;
-  font-size: 1.08rem;
+  font-size: 1rem;
   font-weight: 700;
-  padding: 5px 4px;
+  padding: 4px;
   font-family: "Nunito", "Outfit", sans-serif;
 }
 
@@ -577,13 +579,14 @@ background: rgba(255,255,255,0.10);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+  align-items: center;
 }
 
 .timer-main-button{
-  min-height: 38px;
+  min-height: 34px;
   border-radius: 999px;
   font-size: 0.85rem;
-  padding: 8px;
+  padding: 6px;
   font-weight: 800;
 }
 
@@ -598,7 +601,7 @@ background: rgba(255,255,255,0.10);
 
 .timer-step-button{
   width: 100%;
-  height: 24px;
+  height: 22px;
   border-radius: 9px;
   border: 1px solid rgba(124,182,255,0.34);
   background: linear-gradient(180deg, rgba(124,182,255,0.26), rgba(124,182,255,0.12));
