@@ -1,5 +1,5 @@
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Oxanium:wght@600;700&family=Outfit:wght@400;600;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Oxanium:wght@600;700&family=Outfit:wght@400;600;800&family=Manrope:wght@600;700;800&display=swap");
 
 :root{
 --bg-bottom: #0a1220;
@@ -39,8 +39,8 @@ line-height: 1.5;
 }
 
 h1, h2, h3, .main-title{
-font-family: "Oxanium", "Outfit", system-ui, sans-serif;
-letter-spacing: -0.4px;
+font-family: "Manrope", "Inter", "Outfit", system-ui, sans-serif;
+letter-spacing: -0.25px;
 margin: 0;
 }
 
@@ -102,7 +102,7 @@ margin-bottom: 18px;
 color: white;
 font-size: 15px;
 line-height: 1.45;
-font-family: "Inter", "Outfit", system-ui, sans-serif;
+font-family: "Manrope", "Inter", "Outfit", system-ui, sans-serif;
 }
 
 .link-grid {
@@ -130,16 +130,28 @@ padding: 10px;
 
 
 .section-title{
-margin: 22px 0 12px;
+margin: 24px 0 16px;
 color: white;
-font-weight: 1000;
+font-weight: 800;
 letter-spacing: 0.8px;
-font-size: 27px;
+font-size: clamp(1.85rem, 2.4vw, 2.05rem);
 text-align:center;
-font-family: "Inter", "Outfit", system-ui, sans-serif;
+font-family: "Manrope", "Inter", "Outfit", system-ui, sans-serif;
 text-shadow: 0 6px 16px rgba(0,0,0,0.35);
 position: relative;
 padding-bottom: 10px;
+}
+
+
+.section-subtitle{
+margin: -10px 0 12px;
+text-align: center;
+font-size: clamp(0.78rem, 1.8vw, 0.9rem);
+line-height: 1.2;
+letter-spacing: 0.25px;
+color: rgba(255,255,255,0.64);
+font-family: "Inter", "Outfit", system-ui, sans-serif;
+font-weight: 600;
 }
 
 .section-title::after{
@@ -199,13 +211,13 @@ pointer-events: none;
 h1:not(.main-title){
 text-align: center;
 text-transform: capitalize;
-font-size: clamp(2rem, 4.2vw, 2.6rem);
+font-size: clamp(2.15rem, 4.4vw, 2.75rem);
 line-height: 1.15;
 margin: 26px 0 20px;
 color: white;
-font-weight: 1000;
+font-weight: 850;
 letter-spacing: 0.8px;
-font-family: "Inter", "Outfit", system-ui, sans-serif;
+font-family: "Manrope", "Inter", "Outfit", system-ui, sans-serif;
 text-shadow: 0 6px 16px rgba(0,0,0,0.35);
 position: relative;
 padding-bottom: 14px;
@@ -225,9 +237,9 @@ background: linear-gradient(90deg, var(--title-line-start), var(--title-line-mid
 
 
 .button:hover{
-transform: translateY(-2px);
+transform: translateY(-2px) scale(1.015);
 border-color: rgba(124,182,255,0.45);
-background: rgba(255,255,255,0.11);
+background: rgba(255,255,255,0.14);
 }
 .button:hover::before{
 transform: translateX(120%);
@@ -235,7 +247,8 @@ transform: translateX(120%);
 }
 
 .button:active{
-transform: translateY(1px) scale(0.995);
+transform: translateY(0) scale(0.985);
+background: rgba(255,255,255,0.08);
 }
 
 .button:focus-visible{
@@ -491,7 +504,25 @@ background: rgba(255,255,255,0.10);
   }
 
   .section-title{
-    font-size: 1.55rem;
+    margin: 20px 0 14px;
+    font-size: clamp(1.6rem, 7vw, 1.9rem);
+  }
+
+  .section-subtitle{
+    margin: -8px 0 10px;
+    font-size: 0.76rem;
+  }
+
+  .button{
+    padding: 13px 14px;
+  }
+
+  .button:hover{
+    transform: translateY(-1px) scale(1.01);
+  }
+
+  .button:active{
+    transform: scale(0.985);
   }
 }
 
