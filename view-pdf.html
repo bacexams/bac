@@ -29,50 +29,55 @@
 
       <aside class="study-tools" aria-label="Study tools">
         <section class="focus-panel" aria-label="Focus assistant">
-          <header class="focus-panel-header">
-            <p class="focus-kicker">Focus mode</p>
-            <h3>Stay calm. One page at a time.</h3>
-            <p class="focus-hint">Use a simple timer + soft background sound and keep your attention on the PDF.</p>
-          </header>
-
-          <section class="focus-block" aria-label="Study timer">
+          <section class="focus-block timer-block" aria-label="Study timer">
             <div class="focus-row">
               <h4 class="focus-label">Session timer</h4>
-              <span class="focus-badge">Deep work</span>
             </div>
 
-            <div id="timer-display" class="timer-display" aria-live="polite">90:00</div>
+            <div id="timer-display" class="timer-display" aria-live="polite">02:00:00</div>
 
             <form id="timer-form" class="timer-form">
-              <label class="focus-input-label" for="timer-minutes">Duration (minutes)</label>
-              <div class="timer-adjust" aria-label="Choose duration">
-                <button class="timer-step-button" id="timer-minus" type="button" aria-label="Decrease duration by one minute">−</button>
-                <input id="timer-minutes" type="number" min="1" max="360" value="90">
-                <button class="timer-step-button" id="timer-plus" type="button" aria-label="Increase duration by one minute">+</button>
+              <div class="time-columns" aria-label="Choose duration">
+                <div class="time-unit">
+                  <button class="timer-step-button compact-step" type="button" data-unit="hours" data-delta="1" aria-label="Increase hours">˄</button>
+                  <input id="timer-hours" type="number" min="0" max="23" value="2" aria-label="Hours">
+                  <span class="focus-input-label">Hours</span>
+                  <button class="timer-step-button compact-step" type="button" data-unit="hours" data-delta="-1" aria-label="Decrease hours">˅</button>
+                </div>
+                <div class="time-unit">
+                  <button class="timer-step-button compact-step" type="button" data-unit="minutes" data-delta="1" aria-label="Increase minutes">˄</button>
+                  <input id="timer-minutes" type="number" min="0" max="59" value="0" aria-label="Minutes">
+                  <span class="focus-input-label">Minutes</span>
+                  <button class="timer-step-button compact-step" type="button" data-unit="minutes" data-delta="-1" aria-label="Decrease minutes">˅</button>
+                </div>
+                <div class="time-unit">
+                  <button class="timer-step-button compact-step" type="button" data-unit="seconds" data-delta="1" aria-label="Increase seconds">˄</button>
+                  <input id="timer-seconds" type="number" min="0" max="59" value="0" aria-label="Seconds">
+                  <span class="focus-input-label">Seconds</span>
+                  <button class="timer-step-button compact-step" type="button" data-unit="seconds" data-delta="-1" aria-label="Decrease seconds">˅</button>
+                </div>
               </div>
 
               <div class="timer-actions">
-                <button class="button timer-main-button" type="submit">Start session</button>
-                <button id="timer-reset" class="button timer-main-button timer-reset-button" type="button">Reset</button>
+                <button class="button timer-main-button icon-button" type="submit" aria-label="Start timer">▶</button>
+                <button id="timer-reset" class="button timer-main-button timer-reset-button icon-button" type="button" aria-label="Reset timer">↺</button>
               </div>
             </form>
           </section>
 
-          <section class="focus-block" aria-label="Background sound controls">
-            <div class="focus-row">
-              <h4 class="focus-label">Background sound</h4>
-              <span id="volume-label" class="volume-label">35%</span>
-            </div>
-
-            <div id="sound-options" class="sound-options-inline"></div>
+          <section class="focus-block ambiance-block" aria-label="Background sound controls">
+            <h4 class="focus-label">Ambiance</h4>
 
             <div class="ambiance-actions">
-              <button id="sound-play" class="button timer-main-button sound-play" type="button" aria-pressed="false">▶️ Play</button>
-              <div class="volume-controls" aria-label="Volume controls">
-                <button id="volume-down" class="timer-step-button compact-step" type="button" aria-label="Lower volume">−</button>
-                <input id="volume-slider" type="range" min="0" max="100" step="1" value="35" aria-label="Adjust volume">
-                <button id="volume-up" class="timer-step-button compact-step" type="button" aria-label="Raise volume">+</button>
+              <label class="ambiance-label" for="sound-select">Choose soundscape</label>
+              <div class="sound-picker-shell">
+                <select id="sound-select" class="sound-select" aria-label="Select ambiance">
+                  <option value="lofi">Lofi Focus</option>
+                  <option value="rain">Rainfall</option>
+                  <option value="brown-noise">Brown Noise</option>
+                </select>
               </div>
+              <button id="sound-play" class="sound-play-circle" type="button" aria-pressed="false" aria-label="Play ambiance">▶</button>
             </div>
           </section>
         </section>
@@ -226,28 +231,63 @@
     <script>
       const timerDisplay = document.getElementById('timer-display');
       const timerForm = document.getElementById('timer-form');
-      const timerInput = document.getElementById('timer-minutes');
+      const timerHoursInput = document.getElementById('timer-hours');
+      const timerMinutesInput = document.getElementById('timer-minutes');
+      const timerSecondsInput = document.getElementById('timer-seconds');
       const timerReset = document.getElementById('timer-reset');
-      const timerMinus = document.getElementById('timer-minus');
-      const timerPlus = document.getElementById('timer-plus');
-      let remainingSeconds = 90 * 60;
+      const timeStepButtons = Array.from(document.querySelectorAll('[data-unit][data-delta]'));
+      const DEFAULT_SECONDS = 2 * 60 * 60;
+      let remainingSeconds = DEFAULT_SECONDS;
       let timerId = null;
 
+      function formatTime(totalSeconds) {
+        const safeSeconds = Math.max(0, totalSeconds);
+        const hours = Math.floor(safeSeconds / 3600);
+        const mins = Math.floor((safeSeconds % 3600) / 60);
+        const secs = safeSeconds % 60;
+        return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      }
+
+      function sanitizeTimeFields() {
+        const hours = Math.max(0, Math.min(23, Number(timerHoursInput.value) || 0));
+        const minutes = Math.max(0, Math.min(59, Number(timerMinutesInput.value) || 0));
+        const seconds = Math.max(0, Math.min(59, Number(timerSecondsInput.value) || 0));
+
+        timerHoursInput.value = String(hours);
+        timerMinutesInput.value = String(minutes);
+        timerSecondsInput.value = String(seconds);
+
+        return { hours, minutes, seconds };
+      }
+
+      function totalSecondsFromFields() {
+        const { hours, minutes, seconds } = sanitizeTimeFields();
+        return (hours * 3600) + (minutes * 60) + seconds;
+      }
+
+      function setFieldsFromSeconds(totalSeconds) {
+        const safeSeconds = Math.max(0, totalSeconds);
+        const hours = Math.floor(safeSeconds / 3600);
+        const minutes = Math.floor((safeSeconds % 3600) / 60);
+        const seconds = safeSeconds % 60;
+        timerHoursInput.value = String(hours);
+        timerMinutesInput.value = String(minutes);
+        timerSecondsInput.value = String(seconds);
+      }
+
       function renderTimer() {
-        const mins = Math.floor(remainingSeconds / 60);
-        const secs = remainingSeconds % 60;
-        timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        timerDisplay.textContent = formatTime(remainingSeconds);
       }
 
       timerForm.addEventListener('submit', (event) => {
         event.preventDefault();
-        const nextMinutes = Math.max(1, Math.min(360, Number(timerInput.value) || 1));
-        remainingSeconds = nextMinutes * 60;
+        remainingSeconds = Math.max(1, totalSecondsFromFields());
+        setFieldsFromSeconds(remainingSeconds);
         renderTimer();
 
         clearInterval(timerId);
         timerId = setInterval(() => {
-          remainingSeconds -= 1;
+          remainingSeconds = Math.max(0, remainingSeconds - 1);
           renderTimer();
           if (remainingSeconds <= 0) {
             clearInterval(timerId);
@@ -259,32 +299,48 @@
 
       timerReset.addEventListener('click', () => {
         clearInterval(timerId);
-        remainingSeconds = Math.max(1, Number(timerInput.value) || 90) * 60;
+        remainingSeconds = DEFAULT_SECONDS;
+        setFieldsFromSeconds(remainingSeconds);
         renderTimer();
       });
 
-      timerMinus.addEventListener('click', () => {
-        const currentValue = Math.max(1, Math.min(360, Number(timerInput.value) || 1));
-        const nextValue = Math.max(1, currentValue - 1);
-        timerInput.value = String(nextValue);
+      timeStepButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const unit = button.dataset.unit;
+          const delta = Number(button.dataset.delta) || 0;
+          if (!unit || !delta) return;
+
+          const fieldMap = {
+            hours: timerHoursInput,
+            minutes: timerMinutesInput,
+            seconds: timerSecondsInput,
+          };
+
+          const limits = {
+            hours: [0, 23],
+            minutes: [0, 59],
+            seconds: [0, 59],
+          };
+
+          const targetInput = fieldMap[unit];
+          const [minValue, maxValue] = limits[unit];
+          const currentValue = Number(targetInput.value) || 0;
+          const nextValue = Math.max(minValue, Math.min(maxValue, currentValue + delta));
+          targetInput.value = String(nextValue);
+        });
       });
 
-      timerPlus.addEventListener('click', () => {
-        const currentValue = Math.max(1, Math.min(360, Number(timerInput.value) || 1));
-        const nextValue = Math.min(360, currentValue + 1);
-        timerInput.value = String(nextValue);
+      [timerHoursInput, timerMinutesInput, timerSecondsInput].forEach((field) => {
+        field.addEventListener('input', sanitizeTimeFields);
       });
 
+      setFieldsFromSeconds(DEFAULT_SECONDS);
       renderTimer();
     </script>
     <script src="./exam-progress.js" defer></script>
     <script>
-      const soundOptions = document.getElementById('sound-options');
       const soundPlayButton = document.getElementById('sound-play');
-      const volumeDown = document.getElementById('volume-down');
-      const volumeUp = document.getElementById('volume-up');
-      const volumeLabel = document.getElementById('volume-label');
-      const volumeSlider = document.getElementById('volume-slider');
+      const soundSelect = document.getElementById('sound-select');
 
       const soundTracks = [
         { id: 'lofi', label: 'Lofi' },
@@ -292,12 +348,13 @@
         { id: 'brown-noise', label: 'Brown Noise' },
       ];
 
-      let activeTrackId = '';
+      let activeTrackId = soundSelect.value;
       const soundEngine = {
         context: null,
         playback: null,
       };
       let currentVolume = 0.35;
+      let isPlaying = false;
 
       function ensureAudioContext() {
         if (!soundEngine.context) {
@@ -416,20 +473,8 @@
       }
 
       function syncActiveTrackUi() {
-        const soundButtons = Array.from(soundOptions.querySelectorAll('[data-track-id]'));
-        soundButtons.forEach((button) => {
-          const isActive = button.dataset.trackId === activeTrackId;
-          button.classList.toggle('is-active', isActive);
-          button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-        });
-        soundPlayButton.textContent = activeTrackId ? '⏸ Pause' : '▶️ Play';
-        soundPlayButton.setAttribute('aria-pressed', activeTrackId ? 'true' : 'false');
-      }
-
-      function syncVolumeUi() {
-        const value = Math.round(currentVolume * 100);
-        volumeLabel.textContent = `${value}%`;
-        if (volumeSlider) volumeSlider.value = String(value);
+        soundPlayButton.textContent = isPlaying ? '❚❚' : '▶';
+        soundPlayButton.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
       }
 
       async function playTrack(track) {
@@ -438,6 +483,7 @@
         if (activeTrackId === track.id) {
           stopActiveSound();
           activeTrackId = '';
+          isPlaying = false;
           syncActiveTrackUi();
           return;
         }
@@ -459,58 +505,37 @@
 
           soundEngine.playback?.setVolume?.(currentVolume);
           activeTrackId = track.id;
+          isPlaying = true;
           syncActiveTrackUi();
         } catch (error) {
           console.error('Unable to start audio track:', error);
         }
       }
 
-      soundTracks.forEach((track) => {
-        const soundButton = document.createElement('button');
-        soundButton.type = 'button';
-        soundButton.className = 'sound-option';
-        soundButton.dataset.trackId = track.id;
-        soundButton.textContent = track.label;
-        soundButton.setAttribute('aria-pressed', 'false');
-
-        soundButton.addEventListener('click', async () => {
-          if (activeTrackId && soundEngine.playback) {
-            await playTrack(track);
-            return;
-          }
-
-          activeTrackId = track.id;
-          syncActiveTrackUi();
-        });
-
-        soundOptions.appendChild(soundButton);
-      });
-
       soundPlayButton.addEventListener('click', async () => {
-        const selectedTrack = soundTracks.find((track) => track.id === activeTrackId) || soundTracks[0];
+        const selectedTrackId = soundSelect?.value || activeTrackId;
+        const selectedTrack = soundTracks.find((track) => track.id === selectedTrackId) || soundTracks[0];
+        if (isPlaying && selectedTrackId === activeTrackId) {
+          stopActiveSound();
+          isPlaying = false;
+          syncActiveTrackUi();
+          return;
+        }
         await playTrack(selectedTrack);
       });
 
-      volumeDown.addEventListener('click', () => {
-        currentVolume = Math.max(0, currentVolume - 0.05);
-        soundEngine.playback?.setVolume?.(currentVolume);
-        syncVolumeUi();
-      });
-
-      volumeUp.addEventListener('click', () => {
-        currentVolume = Math.min(1, currentVolume + 0.05);
-        soundEngine.playback?.setVolume?.(currentVolume);
-        syncVolumeUi();
-      });
-
-      volumeSlider?.addEventListener('input', () => {
-        currentVolume = Math.max(0, Math.min(1, Number(volumeSlider.value) / 100));
-        soundEngine.playback?.setVolume?.(currentVolume);
-        syncVolumeUi();
+      soundSelect?.addEventListener('change', async () => {
+        const nextTrackId = soundSelect.value;
+        if (!nextTrackId) return;
+        if (!isPlaying) {
+          activeTrackId = nextTrackId;
+          return;
+        }
+        const nextTrack = soundTracks.find((track) => track.id === nextTrackId);
+        await playTrack(nextTrack);
       });
 
       syncActiveTrackUi();
-      syncVolumeUi();
     </script>
   </body>
 </html>
