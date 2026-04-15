@@ -1116,74 +1116,13 @@ body{
   z-index: 50;
 }
 
-.sound-menu{
-  position: fixed;
-  top: 70px;
-  left: 14px;
-  z-index: 2000;
-  isolation: isolate;
-}
-
-.sound-toggle{
-  border: 1px solid var(--border);
-  background: var(--surface-strong);
-  color: var(--text);
-  border-radius: calc(var(--radius) + 2px);
-  padding: 14px 20px;
-  min-height: 50px;
-  font-size: 1.08rem;
-  font-family: "Outfit", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 16px 42px rgba(0,0,0,0.48);
-  backdrop-filter: blur(10px);
-  transition: transform 220ms cubic-bezier(.2,.7,.2,1), border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
-}
-
-.sound-toggle:hover{
-  transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--accent) 55%, white);
-  background: rgba(255,255,255,0.12);
-}
-
-.sound-toggle:active{
-  transform: translateY(1px) scale(0.99);
-}
-
-.sound-options{
-  margin-top: 8px;
-  display: grid;
-  gap: 8px;
-  padding: 10px;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  background: var(--surface-strong);
-  transform-origin: top;
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
-  transform: translateY(-8px);
-  transition: max-height 280ms ease, opacity 220ms ease, transform 280ms ease;
-  min-width: 170px;
-  z-index: 2001;
-  box-shadow: 0 16px 36px rgba(0,0,0,0.45);
-}
-
-.sound-options.is-open{
-  max-height: 280px;
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
 .sound-option{
   border: 1px solid var(--border);
   background: rgba(255,255,255,0.06);
   color: var(--text);
   border-radius: 11px;
   padding: 10px 12px;
-  text-align: left;
+  text-align: center;
   font: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -1460,6 +1399,53 @@ body{
   outline-offset: 2px;
 }
 .timer-display.is-finished{ animation: pulse 500ms ease 3; }
+.tool-divider{
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 10px 0;
+}
+.ambiance-box{
+  display: grid;
+  gap: 8px;
+  text-align: center;
+}
+.ambiance-title{
+  margin: 0 !important;
+}
+.sound-options-inline{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.sound-options-inline .sound-option{
+  padding: 8px 6px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+.ambiance-actions{
+  display: grid;
+  gap: 8px;
+}
+.volume-controls{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+.compact-step{
+  width: 36px;
+  height: 36px;
+  font-size: 1.2rem;
+  border-radius: 10px;
+}
+.volume-label{
+  font-weight: 700;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  padding: 7px 8px;
+}
 
 @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)} }
 
