@@ -253,8 +253,8 @@
     progressWrap.className = 'exam-progress';
     progressWrap.innerHTML = `
       <div class="exam-progress-top">
-        <strong>Progression</strong>
-        <span class="exam-progress-label">0%</span>
+        <span class="exam-progress-value">0%</span>
+        <span class="exam-progress-fraction">0/0</span>
       </div>
       <div class="exam-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
         <div class="exam-progress-fill"></div>
@@ -306,11 +306,13 @@
       });
 
       const fill = progressWrap.querySelector('.exam-progress-fill');
-      const label = progressWrap.querySelector('.exam-progress-label');
+      const value = progressWrap.querySelector('.exam-progress-value');
+      const fraction = progressWrap.querySelector('.exam-progress-fraction');
       const track = progressWrap.querySelector('.exam-progress-track');
 
       fill.style.width = `${progress.percentage}%`;
-      label.textContent = `${progress.percentage}% (${progress.doneCount}/${progress.total})`;
+      value.textContent = `${progress.percentage}%`;
+      fraction.textContent = `${progress.doneCount}/${progress.total}`;
       track.setAttribute('aria-valuenow', String(progress.percentage));
     }
 
