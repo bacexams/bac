@@ -253,11 +253,11 @@
     progressWrap.className = 'exam-progress';
     progressWrap.innerHTML = `
       <div class="exam-progress-top">
-        <span class="exam-progress-value">0%</span>
         <span class="exam-progress-fraction">0/0</span>
       </div>
       <div class="exam-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
         <div class="exam-progress-fill"></div>
+        <span class="exam-progress-value">0%</span>
       </div>
     `;
 
