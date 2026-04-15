@@ -38,22 +38,22 @@
             <form id="timer-form" class="timer-form">
               <div class="time-columns" aria-label="Choose duration">
                 <div class="time-unit">
-                  <button class="timer-step-button compact-step" type="button" data-unit="hours" data-delta="1" aria-label="Increase hours">˄</button>
+                  <button class="timer-step-button compact-step" type="button" data-unit="hours" data-delta="1" aria-label="Increase hours">▲</button>
                   <input id="timer-hours" type="number" min="0" max="23" value="2" aria-label="Hours">
                   <span class="focus-input-label">Hours</span>
-                  <button class="timer-step-button compact-step" type="button" data-unit="hours" data-delta="-1" aria-label="Decrease hours">˅</button>
+                  <button class="timer-step-button compact-step" type="button" data-unit="hours" data-delta="-1" aria-label="Decrease hours">▼</button>
                 </div>
                 <div class="time-unit">
-                  <button class="timer-step-button compact-step" type="button" data-unit="minutes" data-delta="1" aria-label="Increase minutes">˄</button>
+                  <button class="timer-step-button compact-step" type="button" data-unit="minutes" data-delta="1" aria-label="Increase minutes">▲</button>
                   <input id="timer-minutes" type="number" min="0" max="59" value="0" aria-label="Minutes">
                   <span class="focus-input-label">Minutes</span>
-                  <button class="timer-step-button compact-step" type="button" data-unit="minutes" data-delta="-1" aria-label="Decrease minutes">˅</button>
+                  <button class="timer-step-button compact-step" type="button" data-unit="minutes" data-delta="-1" aria-label="Decrease minutes">▼</button>
                 </div>
                 <div class="time-unit">
-                  <button class="timer-step-button compact-step" type="button" data-unit="seconds" data-delta="1" aria-label="Increase seconds">˄</button>
+                  <button class="timer-step-button compact-step" type="button" data-unit="seconds" data-delta="1" aria-label="Increase seconds">▲</button>
                   <input id="timer-seconds" type="number" min="0" max="59" value="0" aria-label="Seconds">
                   <span class="focus-input-label">Seconds</span>
-                  <button class="timer-step-button compact-step" type="button" data-unit="seconds" data-delta="-1" aria-label="Decrease seconds">˅</button>
+                  <button class="timer-step-button compact-step" type="button" data-unit="seconds" data-delta="-1" aria-label="Decrease seconds">▼</button>
                 </div>
               </div>
 
@@ -68,11 +68,20 @@
             <h4 class="focus-label">Ambiance</h4>
 
             <div class="ambiance-actions">
-              <select id="sound-select" class="sound-select" aria-label="Select ambiance">
-                  <option value="lofi">Lofi Focus</option>
+              <div class="sound-select-stack">
+                <select id="sound-select" class="sound-select" aria-label="Select ambiance">
+                  <option value="lofi">Lofi</option>
                   <option value="rain">Rainfall</option>
                   <option value="brown-noise">Brown Noise</option>
                 </select>
+                <div id="lofi-variant-wrap" class="lofi-variant-wrap" aria-hidden="true">
+                  <select id="lofi-variant-select" class="sound-select lofi-variant-select" aria-label="Select lofi style">
+                    <option value="clouds">Clouds</option>
+                    <option value="dreams">Dreams</option>
+                    <option value="hero">Hero</option>
+                  </select>
+                </div>
+              </div>
               <button id="sound-play" class="sound-play-circle" type="button" aria-pressed="false" aria-label="Play ambiance">▶</button>
             </div>
           </section>
@@ -336,12 +345,20 @@
     <script>
       const soundPlayButton = document.getElementById('sound-play');
       const soundSelect = document.getElementById('sound-select');
+      const lofiVariantWrap = document.getElementById('lofi-variant-wrap');
+      const lofiVariantSelect = document.getElementById('lofi-variant-select');
 
       const soundTracks = [
         { id: 'lofi', label: 'Lofi' },
         { id: 'rain', label: 'Rain' },
         { id: 'brown-noise', label: 'Brown Noise' },
       ];
+
+      const lofiSources = {
+        clouds: '/audio/lofi1.mp3',
+        dreams: '/audio/lofi1.mp3',
+        hero: '/audio/lofi1.mp3',
+      };
 
       let activeTrackId = soundSelect.value;
       const soundEngine = {
@@ -360,6 +377,12 @@
           soundEngine.context = new AudioContextClass();
         }
         return soundEngine.context;
+      }
+
+      function updateLofiVariantVisibility() {
+        const showVariant = soundSelect?.value === 'lofi';
+        lofiVariantWrap?.classList.toggle('is-visible', showVariant);
+        lofiVariantWrap?.setAttribute('aria-hidden', showVariant ? 'false' : 'true');
       }
 
       function stopActiveSound() {
@@ -451,7 +474,9 @@
       }
 
       async function startLofi() {
-        const lofiAudio = new Audio('/audio/lofi1.mp3');
+        const selectedVariant = lofiVariantSelect?.value || 'clouds';
+        const source = lofiSources[selectedVariant] || lofiSources.clouds;
+        const lofiAudio = new Audio(source);
         lofiAudio.loop = true;
         lofiAudio.volume = Math.max(0, Math.min(1, currentVolume));
         await lofiAudio.play();
@@ -520,6 +545,7 @@
       });
 
       soundSelect?.addEventListener('change', async () => {
+        updateLofiVariantVisibility();
         const nextTrackId = soundSelect.value;
         if (!nextTrackId) return;
         if (!isPlaying) {
@@ -530,6 +556,12 @@
         await playTrack(nextTrack);
       });
 
+      lofiVariantSelect?.addEventListener('change', async () => {
+        if (!isPlaying || activeTrackId !== 'lofi') return;
+        await playTrack(soundTracks.find((track) => track.id === 'lofi'));
+      });
+
+      updateLofiVariantVisibility();
       syncActiveTrackUi();
     </script>
   </body>
