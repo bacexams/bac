@@ -28,35 +28,53 @@
       </section>
 
       <aside class="study-tools" aria-label="Study tools">
-        <section class="glass-card compact">
-          <h3 class="timer-title">Minuteur</h3>
-          <p class="timer-subtitle">Durée en minutes</p>
-          <div id="timer-display" class="timer-display">120:00</div>
-          <form id="timer-form" class="timer-form">
-            <div class="timer-adjust" aria-label="Choisir la durée">
-              <button class="timer-step-button" id="timer-minus" type="button" aria-label="Retirer une minute">−</button>
-              <input id="timer-minutes" type="number" min="1" max="360" value="90">
-              <button class="timer-step-button" id="timer-plus" type="button" aria-label="Ajouter une minute">+</button>
-            </div>
-            <div class="timer-actions">
-              <button class="button timer-main-button" type="submit">Démarrer</button>
-              <button id="timer-reset" class="button timer-main-button" type="button">Réinitialiser</button>
-            </div>
-          </form>
+        <section class="focus-panel" aria-label="Focus assistant">
+          <header class="focus-panel-header">
+            <p class="focus-kicker">Focus mode</p>
+            <h3>Stay calm. One page at a time.</h3>
+            <p class="focus-hint">Use a simple timer + soft background sound and keep your attention on the PDF.</p>
+          </header>
 
-          <hr class="tool-divider">
-          <div class="ambiance-box" aria-label="Background noise controls">
-            <h4 class="timer-subtitle ambiance-title">Ambiance</h4>
+          <section class="focus-block" aria-label="Study timer">
+            <div class="focus-row">
+              <h4 class="focus-label">Session timer</h4>
+              <span class="focus-badge">Deep work</span>
+            </div>
+
+            <div id="timer-display" class="timer-display" aria-live="polite">90:00</div>
+
+            <form id="timer-form" class="timer-form">
+              <label class="focus-input-label" for="timer-minutes">Duration (minutes)</label>
+              <div class="timer-adjust" aria-label="Choose duration">
+                <button class="timer-step-button" id="timer-minus" type="button" aria-label="Decrease duration by one minute">−</button>
+                <input id="timer-minutes" type="number" min="1" max="360" value="90">
+                <button class="timer-step-button" id="timer-plus" type="button" aria-label="Increase duration by one minute">+</button>
+              </div>
+
+              <div class="timer-actions">
+                <button class="button timer-main-button" type="submit">Start session</button>
+                <button id="timer-reset" class="button timer-main-button timer-reset-button" type="button">Reset</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="focus-block" aria-label="Background sound controls">
+            <div class="focus-row">
+              <h4 class="focus-label">Background sound</h4>
+              <span id="volume-label" class="volume-label">35%</span>
+            </div>
+
             <div id="sound-options" class="sound-options-inline"></div>
+
             <div class="ambiance-actions">
-              <button id="sound-play" class="button timer-main-button" type="button" aria-pressed="false">▶️ Play</button>
+              <button id="sound-play" class="button timer-main-button sound-play" type="button" aria-pressed="false">▶️ Play</button>
               <div class="volume-controls" aria-label="Volume controls">
                 <button id="volume-down" class="timer-step-button compact-step" type="button" aria-label="Lower volume">−</button>
-                <span id="volume-label" class="volume-label">35%</span>
+                <input id="volume-slider" type="range" min="0" max="100" step="1" value="35" aria-label="Adjust volume">
                 <button id="volume-up" class="timer-step-button compact-step" type="button" aria-label="Raise volume">+</button>
               </div>
             </div>
-          </div>
+          </section>
         </section>
       </aside>
     </div>
@@ -266,6 +284,7 @@
       const volumeDown = document.getElementById('volume-down');
       const volumeUp = document.getElementById('volume-up');
       const volumeLabel = document.getElementById('volume-label');
+      const volumeSlider = document.getElementById('volume-slider');
 
       const soundTracks = [
         { id: 'lofi', label: 'Lofi' },
@@ -408,7 +427,9 @@
       }
 
       function syncVolumeUi() {
-        volumeLabel.textContent = `${Math.round(currentVolume * 100)}%`;
+        const value = Math.round(currentVolume * 100);
+        volumeLabel.textContent = `${value}%`;
+        if (volumeSlider) volumeSlider.value = String(value);
       }
 
       async function playTrack(track) {
@@ -453,6 +474,11 @@
         soundButton.setAttribute('aria-pressed', 'false');
 
         soundButton.addEventListener('click', async () => {
+          if (activeTrackId && soundEngine.playback) {
+            await playTrack(track);
+            return;
+          }
+
           activeTrackId = track.id;
           syncActiveTrackUi();
         });
@@ -473,6 +499,12 @@
 
       volumeUp.addEventListener('click', () => {
         currentVolume = Math.min(1, currentVolume + 0.05);
+        soundEngine.playback?.setVolume?.(currentVolume);
+        syncVolumeUi();
+      });
+
+      volumeSlider?.addEventListener('input', () => {
+        currentVolume = Math.max(0, Math.min(1, Number(volumeSlider.value) / 100));
         soundEngine.playback?.setVolume?.(currentVolume);
         syncVolumeUi();
       });
