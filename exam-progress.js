@@ -487,7 +487,9 @@
     function refresh() {
       const done = isDone(pdfPath);
       doneBtn.classList.toggle('exam-done', done);
-      doneBtn.textContent = done ? 'Terminé ✓' : 'Marquer terminé';
+      doneBtn.textContent = done ? '✓' : '';
+      doneBtn.title = done ? 'Terminé' : 'Marquer terminé';
+      doneBtn.setAttribute('aria-label', done ? 'Terminé' : 'Marquer terminé');
 
       if (done && status && status.textContent && !status.textContent.includes('• Terminé')) {
         status.textContent = `${status.textContent} • Terminé`;

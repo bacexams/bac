@@ -20,7 +20,7 @@
             <button id="zoom-out" class="button-mini" type="button" aria-label="Zoom out">−</button>
             <button id="zoom-reset" class="button-mini" type="button" aria-label="Reset zoom">100%</button>
             <button id="zoom-in" class="button-mini" type="button" aria-label="Zoom in">+</button>
-            <a id="open-native" class="button-mini button-mini-link" href="#" target="_blank" rel="noopener">Open</a>
+            <a id="open-native" class="button-mini button-mini-link" href="#" target="_blank" rel="noopener">Télécharger</a>
           </div>
         </header>
 
@@ -30,7 +30,7 @@
       <aside class="study-tools" aria-label="Study tools">
         <section class="focus-block timer-block" aria-label="Study timer">
             <div class="focus-row">
-              <h4 class="focus-label">Minuteur</h4>
+              <h4 class="focus-label">⏱️ Minuteur</h4>
             </div>
 
             <div id="timer-display" class="timer-display" aria-live="polite">02:00:00</div>
@@ -41,16 +41,19 @@
                   <button class="timer-step-button compact-step" type="button" data-unit="hours" data-delta="1" aria-label="Increase hours">▲</button>
                   <input id="timer-hours" type="number" min="0" max="23" value="2" aria-label="Hours">
                   <button class="timer-step-button compact-step" type="button" data-unit="hours" data-delta="-1" aria-label="Decrease hours">▼</button>
+                  <span class="time-unit-hint">Heures</span>
                 </div>
                 <div class="time-unit">
                   <button class="timer-step-button compact-step" type="button" data-unit="minutes" data-delta="1" aria-label="Increase minutes">▲</button>
                   <input id="timer-minutes" type="number" min="0" max="59" value="0" aria-label="Minutes">
                   <button class="timer-step-button compact-step" type="button" data-unit="minutes" data-delta="-1" aria-label="Decrease minutes">▼</button>
+                  <span class="time-unit-hint">Minutes</span>
                 </div>
                 <div class="time-unit">
                   <button class="timer-step-button compact-step" type="button" data-unit="seconds" data-delta="1" aria-label="Increase seconds">▲</button>
                   <input id="timer-seconds" type="number" min="0" max="59" value="0" aria-label="Seconds">
                   <button class="timer-step-button compact-step" type="button" data-unit="seconds" data-delta="-1" aria-label="Decrease seconds">▼</button>
+                  <span class="time-unit-hint">Secondes</span>
                 </div>
               </div>
 
@@ -62,7 +65,7 @@
           </section>
 
           <section class="focus-block ambiance-block" aria-label="Background sound controls">
-            <h4 class="focus-label">Ambiance</h4>
+            <h4 class="focus-label">🎵 Ambiance</h4>
 
             <div class="ambiance-actions">
               <div class="sound-select-stack">
@@ -140,7 +143,7 @@
           statusEl.textContent = 'Impossible de charger ce PDF.';
           containerEl.innerHTML = `
             <p class="pdf-error">Ce document ne peut pas être affiché ici.</p>
-            <p class="pdf-error-sub">Essaie le bouton <strong>Open</strong> pour l’ouvrir directement dans le navigateur.</p>
+            <p class="pdf-error-sub">Essaie le bouton <strong>Télécharger</strong> pour l’ouvrir directement dans le navigateur.</p>
           `;
         }
       }
