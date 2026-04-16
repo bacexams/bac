@@ -17,6 +17,8 @@
           </div>
 
           <div class="pdf-toolbar-actions">
+            <a id="home-link" class="button-mini button-mini-link" href="./2bac.html">Accueil</a>
+            <button id="back-button" class="button-mini" type="button">Retour</button>
             <button id="zoom-out" class="button-mini" type="button" aria-label="Zoom out">−</button>
             <button id="zoom-reset" class="button-mini" type="button" aria-label="Reset zoom">100%</button>
             <button id="zoom-in" class="button-mini" type="button" aria-label="Zoom in">+</button>
@@ -105,6 +107,8 @@
       const statusEl = document.getElementById('pdf-status');
       const containerEl = document.getElementById('pdf-container');
       const openNativeEl = document.getElementById('open-native');
+      const homeLinkEl = document.getElementById('home-link');
+      const backButtonEl = document.getElementById('back-button');
       const zoomOutBtn = document.getElementById('zoom-out');
       const zoomInBtn = document.getElementById('zoom-in');
       const zoomResetBtn = document.getElementById('zoom-reset');
@@ -115,6 +119,18 @@
       let isRendering = false;
 
       const isValidPdfPath = decodedPdfPath.toLowerCase().endsWith('.pdf');
+      const is1BacDocument = /(^|\/)(1bac|1-bac)\//i.test(decodedPdfPath);
+      homeLinkEl.href = is1BacDocument ? './1bac.html' : './2bac.html';
+
+      backButtonEl.addEventListener('click', () => {
+        const hasReferrer = Boolean(document.referrer);
+        const sameOriginReferrer = hasReferrer && document.referrer.startsWith(window.location.origin);
+        if (window.history.length > 1 && sameOriginReferrer) {
+          window.history.back();
+          return;
+        }
+        window.location.href = homeLinkEl.href;
+      });
 
       if (!isValidPdfPath) {
         statusEl.textContent = 'PDF introuvable. Vérifie le lien.';

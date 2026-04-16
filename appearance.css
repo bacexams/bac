@@ -378,6 +378,8 @@ background: rgba(255,255,255,0.10);
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .button-mini{
@@ -1126,8 +1128,8 @@ width: 100%;
 
 .exam-progress {
   margin: 10px auto 16px;
-  padding: 10px 14px 12px;
-  max-width: 430px;
+  padding: 12px 14px 14px;
+  width: min(100%, 680px);
   border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
   border-radius: 16px;
   background: color-mix(in srgb, var(--surface-strong) 86%, transparent);
@@ -1135,34 +1137,29 @@ width: 100%;
 
 .exam-progress-top {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: baseline;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 8px;
 }
 
 .exam-progress-value {
-  font-size: 0.98rem;
+  font-size: 1.05rem;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.03em;
   color: color-mix(in srgb, var(--text) 96%, #000000 4%);
 }
 
-.exam-progress-fraction {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--muted);
-}
-
 .exam-progress-track {
-  width: min(86%, 360px);
+  width: 100%;
   margin: 0 auto;
-  height: 19px;
+  height: 22px;
   background: color-mix(in srgb, var(--accent) 18%, transparent);
   border-radius: 999px;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
+  position: relative;
 }
 
 .exam-progress-fill {
@@ -1170,6 +1167,18 @@ width: 100%;
   height: 100%;
   background: color-mix(in srgb, var(--accent) 50%, #9ea8b7 50%);
   transition: width 180ms ease;
+}
+
+.exam-progress-end {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--text) 82%, #000000 18%);
+  pointer-events: none;
 }
 
 .exam-done-button {
@@ -1921,4 +1930,25 @@ body{
   font-family: var(--font-base);
   letter-spacing: 0.01em;
   padding: 0 12px;
+}
+
+@media (max-width: 640px){
+  .pdf-toolbar{
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pdf-toolbar-actions{
+    justify-content: center;
+  }
+
+  .pdf-toolbar-actions .button-mini{
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .exam-progress {
+    width: 100%;
+    margin-bottom: 14px;
+  }
 }
