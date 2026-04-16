@@ -150,19 +150,19 @@
       <div id="theme-options" class="theme-options" aria-hidden="true">
         <button type="button" class="theme-swatch" data-theme="theme-bleu" aria-label="Thème Bleu"></button>
         <button type="button" class="theme-swatch" data-theme="theme-clair" aria-label="Thème Clair"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-vert" aria-label="Thème Vert"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-rose" aria-label="Thème Rose"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-banana" aria-label="Thème Banane"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-cotton" aria-label="Thème Pastel bleu"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-vert" aria-label="Thème Vert Solide"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-rose" aria-label="Thème Rose Solide"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-banana" aria-label="Thème Jaune Solide"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-cotton" aria-label="Thème Bleu Pastel"></button>
         <button type="button" class="theme-swatch" data-theme="theme-noir" aria-label="Thème Noir"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-gold" aria-label="Thème Doré"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-peach" aria-label="Thème Pêche"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-lavande" aria-label="Thème Lavande"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-pistache" aria-label="Thème Pistache"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-sunset" aria-label="Thème Sunset"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-bubble" aria-label="Thème Bubblegum"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-sorbet" aria-label="Thème Sorbet"></button>
-        <button type="button" class="theme-swatch" data-theme="theme-grape" aria-label="Thème Grape"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-gold" aria-label="Thème Orange Solide"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-peach" aria-label="Thème Orange Pastel"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-lavande" aria-label="Thème Violet Pastel"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-pistache" aria-label="Thème Vert Pastel"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-sunset" aria-label="Thème Bleu Solide"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-bubble" aria-label="Thème Rose Pastel"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-sorbet" aria-label="Thème Jaune Pastel"></button>
+        <button type="button" class="theme-swatch" data-theme="theme-grape" aria-label="Thème Violet Solide"></button>
       </div>
     `;
 
