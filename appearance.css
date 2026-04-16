@@ -1,10 +1,10 @@
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Inter:wght@500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap");
 
 :root{
 --bg-bottom: #0a1220;
 --font-base: "Outfit", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
---font-title: "Sora", "Inter", "Outfit", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+--font-title: "Black Ops One", "Sora", "Inter", "Outfit", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 --weight-body-regular: 500;
 --weight-body-strong: 600;
 --weight-title: 700;
