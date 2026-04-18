@@ -101,6 +101,11 @@
         localStorage.setItem(key, JSON.stringify(items));
       }
 
+      function createTodoId() {
+        if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+        return `todo-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      }
+
       function clearDropIndicators() {
         list.querySelectorAll('.is-drop-before, .is-drop-after, .is-hovered').forEach((entry) => {
           entry.classList.remove('is-drop-before', 'is-drop-after', 'is-hovered');
@@ -253,7 +258,7 @@
         const text = input.value.trim();
         if (!text) return;
         const items = read();
-        const id = crypto.randomUUID();
+        const id = createTodoId();
         items.unshift({ id, text, done: false });
         lastAddedId = id;
         write(items.slice(0, 20));
