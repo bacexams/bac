@@ -85,6 +85,7 @@
       const list = document.getElementById('todo-list');
       const TO_COLLAPSE_AT = 6;
       let expanded = false;
+      let lastAddedId = null;
       let dragState = { draggedId: null, dropId: null, placeAfter: false };
 
       const toggleAll = document.createElement('button');
@@ -204,6 +205,13 @@
             resetDragState();
           });
 
+          if (item.id === lastAddedId) {
+            li.classList.add('is-added');
+            li.addEventListener('animationend', () => {
+              li.classList.remove('is-added');
+            }, { once: true });
+          }
+
           list.appendChild(li);
         });
 
@@ -246,7 +254,9 @@
         const text = input.value.trim();
         if (!text) return;
         const items = read();
-        items.unshift({ id: crypto.randomUUID(), text, done: false });
+        const id = crypto.randomUUID();
+        items.unshift({ id, text, done: false });
+        lastAddedId = id;
         write(items.slice(0, 20));
         input.value = '';
         render();
