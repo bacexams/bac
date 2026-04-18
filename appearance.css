@@ -1182,10 +1182,22 @@ width: 100%;
   pointer-events: none;
 }
 
+
 .button-disabled{
   opacity: 0.78;
   cursor: not-allowed;
   filter: grayscale(0.08);
+  pointer-events: none;
+}
+
+.button-unavailable{
+  flex-direction: column;
+  gap: 4px;
+}
+
+.button-unavailable-note{
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 
 .exam-done-button {
