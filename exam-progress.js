@@ -252,11 +252,9 @@
     const progressWrap = document.createElement('div');
     progressWrap.className = 'exam-progress';
     progressWrap.innerHTML = `
-      <div class="exam-progress-top">
-        <span class="exam-progress-value">0%</span>
-      </div>
       <div class="exam-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
         <div class="exam-progress-fill"></div>
+        <span class="exam-progress-value">0%</span>
         <span class="exam-progress-end">100%</span>
       </div>
     `;
@@ -428,16 +426,37 @@
   }
 
   function attachButtonProgress(button, percentage) {
-    if (!button || button.querySelector('.button-progress-track')) return;
+    if (!button) return;
     button.classList.add('has-button-progress');
 
-    const track = document.createElement('span');
-    track.className = 'button-progress-track';
-    const fill = document.createElement('span');
-    fill.className = 'button-progress-fill';
-    fill.style.setProperty('--progress', `${percentage}%`);
-    track.appendChild(fill);
-    button.appendChild(track);
+    let badge = button.querySelector('.session-progress-badge');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'session-progress-badge';
+      button.prepend(badge);
+    }
+
+    badge.style.setProperty('--progress', `${percentage}%`);
+    badge.textContent = `${percentage}%`;
+    badge.setAttribute('aria-hidden', 'true');
+  }
+
+  function isCadresReferentielsButton(anchor) {
+    const grid = anchor.closest('.grid');
+    const sectionTitle = grid?.previousElementSibling;
+    const sectionText = sectionTitle?.classList.contains('section-title')
+      ? sectionTitle.textContent || ''
+      : '';
+    if (/cadres?\s*r[ée]f[ée]rentiels?/i.test(sectionText)) return true;
+
+    const href = (anchor.getAttribute('href') || '').toLowerCase();
+    return /(?:^|[\/?])cdr|cadre/i.test(href);
+  }
+
+  function shouldSkipProgressForButton(anchor) {
+    const page = document.body?.dataset?.page || '';
+    if ((page === '1bac' || page === '2bac') && isCadresReferentielsButton(anchor)) return true;
+    return false;
   }
 
   async function enhanceAllButtonsWithProgress() {
@@ -445,6 +464,7 @@
     const actionButtons = Array.from(document.querySelectorAll('button.index-enter-button[onclick]'));
 
     await Promise.all(anchors.map(async (anchor) => {
+      if (shouldSkipProgressForButton(anchor)) return;
       const progress = await getProgressForTarget(anchor.getAttribute('href') || '');
       if (!progress) return;
       attachButtonProgress(anchor, progress.percentage);
