@@ -72,15 +72,28 @@
             <div class="ambiance-actions">
               <div class="sound-select-stack">
                 <select id="sound-select" class="sound-select" aria-label="Select ambiance">
-                  <option value="lofi">Lofi</option>
-                  <option value="rain">Rainfall</option>
                   <option value="brown-noise">Brown Noise</option>
+                  <option value="rain">Rain</option>
+                  <option value="lofi">Lofi</option>
                 </select>
                 <div id="lofi-variant-wrap" class="lofi-variant-wrap" aria-hidden="true">
-                  <select id="lofi-variant-select" class="sound-select lofi-variant-select" aria-label="Select lofi style">
-                    <option value="clouds">Clouds</option>
-                    <option value="dreams">Dreams</option>
-                    <option value="hero">Hero</option>
+                  <select id="lofi-variant-select" class="sound-select lofi-variant-select" aria-label="Select lofi track">
+                    <option value="Care">Care</option>
+                    <option value="Cologne">Cologne</option>
+                    <option value="Cutie">Cutie</option>
+                    <option value="Excite">Excite</option>
+                    <option value="Falling">Falling</option>
+                    <option value="Hope">Hope</option>
+                    <option value="Iced">Iced</option>
+                    <option value="Morning">Morning</option>
+                    <option value="Snowy">Snowy</option>
+                    <option value="Sonic">Sonic</option>
+                    <option value="Sorcery">Sorcery</option>
+                    <option value="Streets">Streets</option>
+                    <option value="Sunset">Sunset</option>
+                    <option value="Swift">Swift</option>
+                    <option value="Tube">Tube</option>
+                    <option value="Watermelon">Watermelon</option>
                   </select>
                 </div>
               </div>
@@ -364,36 +377,34 @@
       const lofiVariantWrap = document.getElementById('lofi-variant-wrap');
       const lofiVariantSelect = document.getElementById('lofi-variant-select');
 
-      const soundTracks = [
-        { id: 'lofi', label: 'Lofi' },
-        { id: 'rain', label: 'Rain' },
-        { id: 'brown-noise', label: 'Brown Noise' },
+      const lofiPlaylist = [
+        'Care',
+        'Cologne',
+        'Cutie',
+        'Excite',
+        'Falling',
+        'Hope',
+        'Iced',
+        'Morning',
+        'Snowy',
+        'Sonic',
+        'Sorcery',
+        'Streets',
+        'Sunset',
+        'Swift',
+        'Tube',
+        'Watermelon',
       ];
 
-      const lofiSources = {
-        clouds: '/audio/lofi1.mp3',
-        dreams: '/audio/lofi1.mp3',
-        hero: '/audio/lofi1.mp3',
+      const trackSources = {
+        'brown-noise': './audio/brown.mp3',
+        rain: './audio/rain.mp3',
       };
 
       let activeTrackId = soundSelect.value;
-      const soundEngine = {
-        context: null,
-        playback: null,
-      };
-      let currentVolume = 0.35;
       let isPlaying = false;
-
-      function ensureAudioContext() {
-        if (!soundEngine.context) {
-          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-          if (!AudioContextClass) {
-            throw new Error('Web Audio API is not supported in this browser.');
-          }
-          soundEngine.context = new AudioContextClass();
-        }
-        return soundEngine.context;
-      }
+      let currentVolume = 0.35;
+      let activeAudio = null;
 
       function updateLofiVariantVisibility() {
         const showVariant = soundSelect?.value === 'lofi';
@@ -401,111 +412,68 @@
         lofiVariantWrap?.setAttribute('aria-hidden', showVariant ? 'false' : 'true');
       }
 
+      function getCurrentAudioSource() {
+        const selectedTrackId = soundSelect?.value || 'brown-noise';
+
+        if (selectedTrackId === 'lofi') {
+          const selectedSong = lofiVariantSelect?.value || lofiPlaylist[0];
+          return `./audio/${selectedSong}.mp3`;
+        }
+
+        return trackSources[selectedTrackId] || trackSources['brown-noise'];
+      }
+
       function stopActiveSound() {
-        if (soundEngine.playback && typeof soundEngine.playback.stop === 'function') {
-          soundEngine.playback.stop();
-          soundEngine.playback = null;
-        }
+        if (!activeAudio) return;
+        activeAudio.pause();
+        activeAudio.currentTime = 0;
+        activeAudio.onended = null;
+        activeAudio = null;
       }
 
-      function startBrownNoise(ctx) {
-        const bufferSize = 2 * ctx.sampleRate;
-        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        let lastOut = 0;
+      function attachAutoplayHandler(audio, selectedTrackId) {
+        audio.onended = () => {
+          if (selectedTrackId !== 'lofi') {
+            audio.currentTime = 0;
+            audio.play().catch((error) => {
+              console.error('Unable to continue ambiance audio:', error);
+            });
+            return;
+          }
 
-        for (let i = 0; i < bufferSize; i += 1) {
-          const white = Math.random() * 2 - 1;
-          lastOut = (lastOut + (0.02 * white)) / 1.02;
-          output[i] = lastOut * 3.4;
-        }
-
-        const source = ctx.createBufferSource();
-        source.buffer = noiseBuffer;
-        source.loop = true;
-
-        const gain = ctx.createGain();
-        gain.gain.value = 0.22;
-
-        source.connect(gain);
-        gain.connect(ctx.destination);
-        source.start();
-
-        return {
-          setVolume: (volume) => {
-            gain.gain.value = Math.max(0, Math.min(1, volume)) * 0.75;
-          },
-          stop: () => {
-            source.stop();
-            source.disconnect();
-            gain.disconnect();
-          },
+          const currentSong = lofiVariantSelect?.value || lofiPlaylist[0];
+          const currentIndex = lofiPlaylist.indexOf(currentSong);
+          const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % lofiPlaylist.length : 0;
+          const nextSong = lofiPlaylist[nextIndex];
+          if (lofiVariantSelect) {
+            lofiVariantSelect.value = nextSong;
+          }
+          playSelectedSound();
         };
       }
 
-      function startRain(ctx) {
-        const bufferSize = 2 * ctx.sampleRate;
-        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
+      async function playSelectedSound() {
+        const selectedTrackId = soundSelect?.value || 'brown-noise';
+        const source = getCurrentAudioSource();
 
-        for (let i = 0; i < bufferSize; i += 1) {
-          output[i] = Math.random() * 2 - 1;
+        stopActiveSound();
+
+        const nextAudio = new Audio(source);
+        nextAudio.volume = Math.max(0, Math.min(1, currentVolume));
+        nextAudio.preload = 'auto';
+        attachAutoplayHandler(nextAudio, selectedTrackId);
+
+        try {
+          await nextAudio.play();
+          activeAudio = nextAudio;
+          activeTrackId = selectedTrackId;
+          isPlaying = true;
+          syncActiveTrackUi();
+        } catch (error) {
+          console.error('Unable to start audio track:', error);
+          isPlaying = false;
+          syncActiveTrackUi();
         }
-
-        const source = ctx.createBufferSource();
-        source.buffer = noiseBuffer;
-        source.loop = true;
-
-        const lowpass = ctx.createBiquadFilter();
-        lowpass.type = 'lowpass';
-        lowpass.frequency.value = 2100;
-        lowpass.Q.value = 0.8;
-
-        const highpass = ctx.createBiquadFilter();
-        highpass.type = 'highpass';
-        highpass.frequency.value = 300;
-        highpass.Q.value = 0.6;
-
-        const gain = ctx.createGain();
-        gain.gain.value = 0.18;
-
-        source.connect(lowpass);
-        lowpass.connect(highpass);
-        highpass.connect(gain);
-        gain.connect(ctx.destination);
-        source.start();
-
-        return {
-          setVolume: (volume) => {
-            gain.gain.value = Math.max(0, Math.min(1, volume)) * 0.6;
-          },
-          stop: () => {
-            source.stop();
-            source.disconnect();
-            lowpass.disconnect();
-            highpass.disconnect();
-            gain.disconnect();
-          },
-        };
-      }
-
-      async function startLofi() {
-        const selectedVariant = lofiVariantSelect?.value || 'clouds';
-        const source = lofiSources[selectedVariant] || lofiSources.clouds;
-        const lofiAudio = new Audio(source);
-        lofiAudio.loop = true;
-        lofiAudio.volume = Math.max(0, Math.min(1, currentVolume));
-        await lofiAudio.play();
-
-        return {
-          setVolume: (volume) => {
-            lofiAudio.volume = Math.max(0, Math.min(1, volume));
-          },
-          stop: () => {
-            lofiAudio.pause();
-            lofiAudio.currentTime = 0;
-          },
-        };
       }
 
       function syncActiveTrackUi() {
@@ -513,68 +481,25 @@
         soundPlayButton.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
       }
 
-      async function playTrack(track) {
-        if (!track) return;
-
-        if (activeTrackId === track.id) {
-          stopActiveSound();
-          activeTrackId = '';
-          isPlaying = false;
-          syncActiveTrackUi();
-          return;
-        }
-
-        try {
-          stopActiveSound();
-
-          if (track.id === 'lofi') {
-            soundEngine.playback = await startLofi();
-          } else if (track.id === 'rain') {
-            const ctx = ensureAudioContext();
-            await ctx.resume();
-            soundEngine.playback = startRain(ctx);
-          } else if (track.id === 'brown-noise') {
-            const ctx = ensureAudioContext();
-            await ctx.resume();
-            soundEngine.playback = startBrownNoise(ctx);
-          }
-
-          soundEngine.playback?.setVolume?.(currentVolume);
-          activeTrackId = track.id;
-          isPlaying = true;
-          syncActiveTrackUi();
-        } catch (error) {
-          console.error('Unable to start audio track:', error);
-        }
-      }
-
       soundPlayButton.addEventListener('click', async () => {
-        const selectedTrackId = soundSelect?.value || activeTrackId;
-        const selectedTrack = soundTracks.find((track) => track.id === selectedTrackId) || soundTracks[0];
-        if (isPlaying && selectedTrackId === activeTrackId) {
+        if (isPlaying) {
           stopActiveSound();
           isPlaying = false;
           syncActiveTrackUi();
           return;
         }
-        await playTrack(selectedTrack);
+
+        await playSelectedSound();
       });
 
       soundSelect?.addEventListener('change', async () => {
         updateLofiVariantVisibility();
-        const nextTrackId = soundSelect.value;
-        if (!nextTrackId) return;
-        if (!isPlaying) {
-          activeTrackId = nextTrackId;
-          return;
-        }
-        const nextTrack = soundTracks.find((track) => track.id === nextTrackId);
-        await playTrack(nextTrack);
+        await playSelectedSound();
       });
 
       lofiVariantSelect?.addEventListener('change', async () => {
-        if (!isPlaying || activeTrackId !== 'lofi') return;
-        await playTrack(soundTracks.find((track) => track.id === 'lofi'));
+        if ((soundSelect?.value || '') !== 'lofi') return;
+        await playSelectedSound();
       });
 
       updateLofiVariantVisibility();
