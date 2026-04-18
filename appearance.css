@@ -1314,42 +1314,42 @@ body{
 }
 
 .theme-cotton{
-  --bg-bottom: #f2f8ff;
-  --surface: rgba(255,255,255,0.82);
-  --surface-strong: rgba(248,252,255,0.94);
-  --border: rgba(89,128,170,0.22);
-  --text: #132a44;
-  --muted: #436083;
-  --accent: #91c2ff;
-  --title-line-start: rgba(145,194,255,0.26);
-  --title-line-mid: rgba(145,194,255,0.96);
-  --title-line-end: rgba(197,226,255,0.9);
+  --bg-bottom: #c9e1ff;
+  --surface: rgba(188,220,255,0.54);
+  --surface-strong: rgba(206,230,255,0.72);
+  --border: rgba(47,96,152,0.34);
+  --text: #102746;
+  --muted: #355a84;
+  --accent: #6daeff;
+  --title-line-start: rgba(109,174,255,0.34);
+  --title-line-mid: rgba(109,174,255,0.98);
+  --title-line-end: rgba(158,206,255,0.92);
 }
 
 .theme-lavande{
-  --bg-bottom: #f7f1ff;
-  --surface: rgba(255,255,255,0.82);
-  --surface-strong: rgba(255,255,255,0.94);
-  --border: rgba(145,118,195,0.26);
-  --text: #2e2045;
-  --muted: #6a558b;
-  --accent: #bea0f3;
-  --title-line-start: rgba(190,160,243,0.28);
-  --title-line-mid: rgba(190,160,243,0.96);
-  --title-line-end: rgba(217,195,252,0.9);
+  --bg-bottom: #e1d2ff;
+  --surface: rgba(215,189,255,0.5);
+  --surface-strong: rgba(229,208,255,0.68);
+  --border: rgba(118,84,181,0.34);
+  --text: #2f1d49;
+  --muted: #5c4390;
+  --accent: #ac82f2;
+  --title-line-start: rgba(172,130,242,0.34);
+  --title-line-mid: rgba(172,130,242,0.98);
+  --title-line-end: rgba(206,177,251,0.92);
 }
 
 .theme-peach{
-  --bg-bottom: #fff3ea;
-  --surface: rgba(255,255,255,0.82);
-  --surface-strong: rgba(255,255,255,0.95);
-  --border: rgba(198,132,99,0.24);
-  --text: #402518;
-  --muted: #805541;
-  --accent: #f3b088;
-  --title-line-start: rgba(243,176,136,0.26);
-  --title-line-mid: rgba(243,176,136,0.96);
-  --title-line-end: rgba(252,212,183,0.9);
+  --bg-bottom: #ffd8c2;
+  --surface: rgba(255,194,159,0.5);
+  --surface-strong: rgba(255,210,179,0.68);
+  --border: rgba(187,99,58,0.34);
+  --text: #3f2010;
+  --muted: #7f4328;
+  --accent: #f29a64;
+  --title-line-start: rgba(242,154,100,0.34);
+  --title-line-mid: rgba(242,154,100,0.98);
+  --title-line-end: rgba(251,191,148,0.92);
 }
 
 .theme-sunset{
@@ -1364,42 +1364,42 @@ body{
 }
 
 .theme-pistache{
-  --bg-bottom: #f1fbf3;
-  --surface: rgba(255,255,255,0.82);
-  --surface-strong: rgba(255,255,255,0.94);
-  --border: rgba(109,161,120,0.26);
-  --text: #173223;
-  --muted: #476952;
-  --accent: #9ad8a8;
-  --title-line-start: rgba(154,216,168,0.27);
-  --title-line-mid: rgba(154,216,168,0.96);
-  --title-line-end: rgba(205,241,214,0.9);
+  --bg-bottom: #cfefd6;
+  --surface: rgba(171,222,182,0.5);
+  --surface-strong: rgba(189,231,198,0.68);
+  --border: rgba(68,136,84,0.34);
+  --text: #143423;
+  --muted: #34684a;
+  --accent: #74cb8e;
+  --title-line-start: rgba(116,203,142,0.34);
+  --title-line-mid: rgba(116,203,142,0.98);
+  --title-line-end: rgba(167,227,183,0.92);
 }
 
 .theme-bubble{
-  --bg-bottom: #fff0f7;
-  --surface: rgba(255,255,255,0.83);
-  --surface-strong: rgba(255,255,255,0.95);
-  --border: rgba(189,120,157,0.27);
-  --text: #3e1f32;
-  --muted: #7d4e69;
-  --accent: #f2a5ca;
-  --title-line-start: rgba(242,165,202,0.26);
-  --title-line-mid: rgba(242,165,202,0.96);
-  --title-line-end: rgba(250,207,227,0.9);
+  --bg-bottom: #ffd2e8;
+  --surface: rgba(249,178,216,0.5);
+  --surface-strong: rgba(251,196,227,0.68);
+  --border: rgba(172,77,129,0.34);
+  --text: #40182f;
+  --muted: #7c3e61;
+  --accent: #f083be;
+  --title-line-start: rgba(240,131,190,0.34);
+  --title-line-mid: rgba(240,131,190,0.98);
+  --title-line-end: rgba(248,176,213,0.92);
 }
 
 .theme-sorbet{
-  --bg-bottom: #fffbe7;
-  --surface: rgba(255,255,255,0.82);
-  --surface-strong: rgba(255,255,255,0.94);
-  --border: rgba(187,163,88,0.27);
-  --text: #3b310b;
-  --muted: #72652d;
-  --accent: #eedb96;
-  --title-line-start: rgba(238,219,150,0.27);
-  --title-line-mid: rgba(238,219,150,0.96);
-  --title-line-end: rgba(249,238,190,0.9);
+  --bg-bottom: #ffefb2;
+  --surface: rgba(248,226,137,0.52);
+  --surface-strong: rgba(251,236,165,0.7);
+  --border: rgba(167,132,36,0.35);
+  --text: #3b2d07;
+  --muted: #725816;
+  --accent: #eec55c;
+  --title-line-start: rgba(238,197,92,0.34);
+  --title-line-mid: rgba(238,197,92,0.98);
+  --title-line-end: rgba(247,218,130,0.92);
 }
 
 .theme-grape{
