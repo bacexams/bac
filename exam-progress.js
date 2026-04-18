@@ -459,7 +459,14 @@
     return false;
   }
 
+  function shouldSkipButtonBadgesOnCurrentPage() {
+    const pathname = (window.location.pathname || '').toLowerCase();
+    return /(?:^|\/)normale\.html$/.test(pathname) || /(?:^|\/)rattrapage\.html$/.test(pathname);
+  }
+
   async function enhanceAllButtonsWithProgress() {
+    if (shouldSkipButtonBadgesOnCurrentPage()) return;
+
     const anchors = Array.from(document.querySelectorAll('a.button[href]'));
     const actionButtons = Array.from(document.querySelectorAll('button.index-enter-button[onclick]'));
 
