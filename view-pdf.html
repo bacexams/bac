@@ -72,6 +72,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
               <div class="timer-actions">
                 <button class="button timer-main-button icon-button" type="submit" aria-label="Start timer">▶</button>
+                <button id="timer-pause" class="button timer-main-button timer-pause-button icon-button" type="button" aria-label="Pause timer">⏸</button>
                 <button id="timer-reset" class="button timer-main-button timer-reset-button icon-button" type="button" aria-label="Reset timer">↺</button>
               </div>
             </form>
@@ -278,6 +279,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const timerHoursInput = document.getElementById('timer-hours');
       const timerMinutesInput = document.getElementById('timer-minutes');
       const timerSecondsInput = document.getElementById('timer-seconds');
+      const timerPause = document.getElementById('timer-pause');
       const timerReset = document.getElementById('timer-reset');
       const timeStepButtons = Array.from(document.querySelectorAll('[data-unit][data-delta]'));
       const DEFAULT_SECONDS = 2 * 60 * 60;
@@ -323,26 +325,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         timerDisplay.textContent = formatTime(remainingSeconds);
       }
 
+      function stopTimer() {
+        clearInterval(timerId);
+        timerId = null;
+      }
+
+      function startTimer() {
+        stopTimer();
+        timerId = setInterval(() => {
+          remainingSeconds = Math.max(0, remainingSeconds - 1);
+          renderTimer();
+          if (remainingSeconds <= 0) {
+            stopTimer();
+            timerDisplay.classList.add('is-finished');
+            setTimeout(() => timerDisplay.classList.remove('is-finished'), 1800);
+          }
+        }, 1000);
+      }
+
       timerForm.addEventListener('submit', (event) => {
         event.preventDefault();
         remainingSeconds = Math.max(1, totalSecondsFromFields());
         setFieldsFromSeconds(remainingSeconds);
         renderTimer();
+        startTimer();
+      });
 
-        clearInterval(timerId);
-        timerId = setInterval(() => {
-          remainingSeconds = Math.max(0, remainingSeconds - 1);
-          renderTimer();
-          if (remainingSeconds <= 0) {
-            clearInterval(timerId);
-            timerDisplay.classList.add('is-finished');
-            setTimeout(() => timerDisplay.classList.remove('is-finished'), 1800);
-          }
-        }, 1000);
+      timerPause.addEventListener('click', () => {
+        stopTimer();
+        setFieldsFromSeconds(remainingSeconds);
       });
 
       timerReset.addEventListener('click', () => {
-        clearInterval(timerId);
+        stopTimer();
         remainingSeconds = DEFAULT_SECONDS;
         setFieldsFromSeconds(remainingSeconds);
         renderTimer();
