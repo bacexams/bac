@@ -594,7 +594,7 @@ background: rgba(255,255,255,0.10);
 
 .timer-actions{
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
   align-items: center;
 }
@@ -607,6 +607,7 @@ background: rgba(255,255,255,0.10);
   font-weight: 800;
 }
 
+.timer-pause-button,
 .timer-reset-button{
   background: rgba(255,255,255,0.04);
 }
